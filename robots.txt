@@ -1,0 +1,14 @@
+User-agent: *
+Allow: /
+Allow: /archives/
+Allow: /categories/
+Allow: /tags/ 
+Allow: /about/ 
+Allow: /friends/
+Disallow: /iconfont/
+Disallow: /js/
+Disallow: /css/
+Disallow: /live2dw/
+ 
+Sitemap: https://findmb.top/sitemap.xml
+Sitemap: https://findmb.top/baidusitemap.xml
