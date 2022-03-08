@@ -6,7 +6,7 @@
   <link href="http://findmb.top/atom.xml" rel="self"/>
   
   <link href="http://findmb.top/"/>
-  <updated>2022-02-06T10:31:19.204Z</updated>
+  <updated>2022-03-08T10:51:28.036Z</updated>
   <id>http://findmb.top/</id>
   
   <author>
@@ -15,6 +15,83 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>关于ROS Navigation小车失控的问题</title>
+    <link href="http://findmb.top/posts/55934/"/>
+    <id>http://findmb.top/posts/55934/</id>
+    <published>2022-02-28T12:44:49.000Z</published>
+    <updated>2022-03-08T10:51:28.036Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css&quot;&gt;&lt;h1 id=&quot;问题描述&quot;&gt;&lt;a href=&quot;#问题描述&quot;</summary>
+        
+      
+    
+    
+    
+    <category term="实用教程" scheme="http://findmb.top/categories/%E5%AE%9E%E7%94%A8%E6%95%99%E7%A8%8B/"/>
+    
+    
+    <category term="ROS" scheme="http://findmb.top/tags/ROS/"/>
+    
+    <category term="自动驾驶" scheme="http://findmb.top/tags/%E8%87%AA%E5%8A%A8%E9%A9%BE%E9%A9%B6/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>关于opencv-python的一点使用说明</title>
+    <link href="http://findmb.top/posts/5699/"/>
+    <id>http://findmb.top/posts/5699/</id>
+    <published>2022-02-13T08:04:03.000Z</published>
+    <updated>2022-03-08T11:01:37.725Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css&quot;&gt;&lt;h1 id=&quot;关于本文&quot;&gt;&lt;a href=&quot;#关于本文&quot;</summary>
+        
+      
+    
+    
+    
+    <category term="实用教程" scheme="http://findmb.top/categories/%E5%AE%9E%E7%94%A8%E6%95%99%E7%A8%8B/"/>
+    
+    
+    <category term="opencv" scheme="http://findmb.top/tags/opencv/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>无处安放的根号-1</title>
+    <link href="http://findmb.top/posts/30320/"/>
+    <id>http://findmb.top/posts/30320/</id>
+    <published>2022-02-06T12:17:35.000Z</published>
+    <updated>2022-02-07T05:53:35.854Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css&quot;&gt;&lt;h1 id=&quot;来玩个游戏吧&quot;&gt;&lt;a href=&quot;#来玩个游戏吧&quot;</summary>
+        
+      
+    
+    
+    
+    <category term="当然我在乱讲三七" scheme="http://findmb.top/categories/%E5%BD%93%E7%84%B6%E6%88%91%E5%9C%A8%E4%B9%B1%E8%AE%B2%E4%B8%89%E4%B8%83/"/>
+    
+    
+    <category term="数学" scheme="http://findmb.top/tags/%E6%95%B0%E5%AD%A6/"/>
+    
+  </entry>
   
   <entry>
     <title>原子会说话</title>
@@ -121,7 +198,7 @@
     <link href="http://findmb.top/posts/37904/"/>
     <id>http://findmb.top/posts/37904/</id>
     <published>2021-01-01T12:37:45.000Z</published>
-    <updated>2022-02-06T10:32:06.935Z</updated>
+    <updated>2022-02-07T05:54:31.966Z</updated>
     
     
       
@@ -171,7 +248,7 @@
     <link href="http://findmb.top/posts/14964/"/>
     <id>http://findmb.top/posts/14964/</id>
     <published>2020-07-21T11:40:45.000Z</published>
-    <updated>2021-04-05T01:03:18.097Z</updated>
+    <updated>2022-02-07T05:50:13.076Z</updated>
     
     
       
@@ -187,6 +264,8 @@
     <category term="生活杂记" scheme="http://findmb.top/categories/%E7%94%9F%E6%B4%BB%E6%9D%82%E8%AE%B0/"/>
     
     
+    <category term="随记" scheme="http://findmb.top/tags/%E9%9A%8F%E8%AE%B0/"/>
+    
     <category term="骑行" scheme="http://findmb.top/tags/%E9%AA%91%E8%A1%8C/"/>
     
   </entry>
@@ -196,7 +275,7 @@
     <link href="http://findmb.top/posts/29293/"/>
     <id>http://findmb.top/posts/29293/</id>
     <published>2020-07-20T06:22:23.000Z</published>
-    <updated>2021-04-05T01:02:31.489Z</updated>
+    <updated>2022-02-07T05:49:48.363Z</updated>
     
     
       
@@ -211,6 +290,8 @@
     
     <category term="生活杂记" scheme="http://findmb.top/categories/%E7%94%9F%E6%B4%BB%E6%9D%82%E8%AE%B0/"/>
     
+    
+    <category term="随记" scheme="http://findmb.top/tags/%E9%9A%8F%E8%AE%B0/"/>
     
     <category term="骑行" scheme="http://findmb.top/tags/%E9%AA%91%E8%A1%8C/"/>
     
@@ -221,7 +302,7 @@
     <link href="http://findmb.top/posts/45267/"/>
     <id>http://findmb.top/posts/45267/</id>
     <published>2020-07-19T13:26:33.000Z</published>
-    <updated>2021-04-05T01:01:58.776Z</updated>
+    <updated>2022-02-07T05:50:21.071Z</updated>
     
     
       
@@ -237,6 +318,8 @@
     <category term="生活杂记" scheme="http://findmb.top/categories/%E7%94%9F%E6%B4%BB%E6%9D%82%E8%AE%B0/"/>
     
     
+    <category term="随记" scheme="http://findmb.top/tags/%E9%9A%8F%E8%AE%B0/"/>
+    
     <category term="骑行" scheme="http://findmb.top/tags/%E9%AA%91%E8%A1%8C/"/>
     
   </entry>
@@ -246,7 +329,7 @@
     <link href="http://findmb.top/posts/56850/"/>
     <id>http://findmb.top/posts/56850/</id>
     <published>2020-07-18T13:26:33.000Z</published>
-    <updated>2021-04-05T01:18:24.474Z</updated>
+    <updated>2022-02-07T05:49:24.565Z</updated>
     
     
       
@@ -262,6 +345,8 @@
     <category term="生活杂记" scheme="http://findmb.top/categories/%E7%94%9F%E6%B4%BB%E6%9D%82%E8%AE%B0/"/>
     
     
+    <category term="随记" scheme="http://findmb.top/tags/%E9%9A%8F%E8%AE%B0/"/>
+    
     <category term="骑行" scheme="http://findmb.top/tags/%E9%AA%91%E8%A1%8C/"/>
     
   </entry>
@@ -271,7 +356,7 @@
     <link href="http://findmb.top/posts/53867/"/>
     <id>http://findmb.top/posts/53867/</id>
     <published>2020-07-17T07:16:29.000Z</published>
-    <updated>2021-04-05T01:00:30.289Z</updated>
+    <updated>2022-02-07T05:49:38.761Z</updated>
     
     
       
@@ -287,6 +372,8 @@
     <category term="生活杂记" scheme="http://findmb.top/categories/%E7%94%9F%E6%B4%BB%E6%9D%82%E8%AE%B0/"/>
     
     
+    <category term="随记" scheme="http://findmb.top/tags/%E9%9A%8F%E8%AE%B0/"/>
+    
     <category term="骑行" scheme="http://findmb.top/tags/%E9%AA%91%E8%A1%8C/"/>
     
   </entry>
@@ -296,7 +383,7 @@
     <link href="http://findmb.top/posts/16913/"/>
     <id>http://findmb.top/posts/16913/</id>
     <published>2020-07-16T07:16:29.000Z</published>
-    <updated>2021-04-05T00:59:53.072Z</updated>
+    <updated>2022-02-07T05:49:15.815Z</updated>
     
     
       
@@ -311,6 +398,8 @@
     
     <category term="生活杂记" scheme="http://findmb.top/categories/%E7%94%9F%E6%B4%BB%E6%9D%82%E8%AE%B0/"/>
     
+    
+    <category term="随记" scheme="http://findmb.top/tags/%E9%9A%8F%E8%AE%B0/"/>
     
     <category term="骑行" scheme="http://findmb.top/tags/%E9%AA%91%E8%A1%8C/"/>
     

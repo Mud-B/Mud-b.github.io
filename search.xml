@@ -4,6 +4,83 @@
   
     
     <entry>
+      <title>关于ROS Navigation小车失控的问题</title>
+      <link href="/posts/55934/"/>
+      <url>/posts/55934/</url>
+      
+        <content type="html"><![CDATA[<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><h1 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h1><p>当你在rivz看到小车规划出来的全局路径是没问题的，但小车却会跑歪，那就说明小车失控了。</p><p>这里失控的原因大概率是控制命令下发不及时，但控制频率丢失大多会跟local_costmap的更新频率丢失一起出现，在小车程序运行的终端会打印类似如下的警告：</p><blockquote><p>[Warn]： Control loop missed its desired rate of xxxHz… the loop actually took xx seconds</br><br>[Warn]： Map update loop missed its desired rate of xxxHz… the loop actually took xx seconds</p></blockquote><h1 id="原因追溯"><a href="#原因追溯" class="headerlink" title="原因追溯"></a>原因追溯</h1><p>该现象主要是<font color='red'>小车周边代价地图更新太慢</font>导致的，而地图更新慢，跟生成代价地图的参数以及小车自身的算力有关。<a href="./#%E8%A7%A3%E5%86%B3%E6%8E%AA%E6%96%BD">&gt; 直接看解决措施 &lt;</a><br>根据终端报的警告，我们可以把问题追溯到move_base.cpp文件下的executeCb()函数和costmap_2d_ros.cpp文件下的mapUpdateLoop()函数。</p><h2 id="1-costmap"><a href="#1-costmap" class="headerlink" title="1.costmap"></a>1.costmap</h2><p>可以先看下costmap报警告的代码，跟我们遇到的问题关系不大的代码，我都用…把他们省略了，这样方便我们认识代码和排查原因。</p><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">Costmap2DROS::mapUpdateLoop</span><span class="params">(<span class="type">double</span> frequency)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  ...</span><br><span class="line">  <span class="keyword">while</span> (nh.<span class="built_in">ok</span>() &amp;&amp; !map_update_thread_shutdown_)</span><br><span class="line">  &#123;</span><br><span class="line">    ...</span><br><span class="line">    </span><br><span class="line">    <span class="built_in">updateMap</span>();</span><br><span class="line">    ...</span><br><span class="line">    r.<span class="built_in">sleep</span>();</span><br><span class="line">    <span class="comment">// make sure to sleep for the remainder of our cycle time</span></span><br><span class="line">    <span class="keyword">if</span> (r.<span class="built_in">cycleTime</span>() &gt; ros::<span class="built_in">Duration</span>(<span class="number">1</span> / frequency))</span><br><span class="line">      <span class="built_in">ROS_WARN</span>(<span class="string">&quot;Map update loop missed its desired rate of %.4fHz... the loop actually took %.4f seconds&quot;</span>, frequency,</span><br><span class="line">               r.<span class="built_in">cycleTime</span>().<span class="built_in">toSec</span>());</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>很明显mapUpdateLoop()这个函数一直在调用updateMap()函数来更新局部地图，然后检测更新超时就报警。</p><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">Costmap2DROS::updateMap</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (!stop_updates_)</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="comment">// get global pose</span></span><br><span class="line">    geometry_msgs::PoseStamped pose;</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">getRobotPose</span> (pose))</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="type">double</span> x = pose.pose.position.x,</span><br><span class="line">             y = pose.pose.position.y,</span><br><span class="line">             yaw = tf2::<span class="built_in">getYaw</span>(pose.pose.orientation);</span><br><span class="line">      layered_costmap_-&gt;<span class="built_in">updateMap</span>(x, y, yaw);</span><br><span class="line">      geometry_msgs::PolygonStamped footprint;</span><br><span class="line">      footprint.header.frame_id = global_frame_;</span><br><span class="line">      footprint.header.stamp = ros::Time::<span class="built_in">now</span>();</span><br><span class="line">      <span class="built_in">transformFootprint</span>(x, y, yaw, padded_footprint_, footprint);</span><br><span class="line">      footprint_pub_.<span class="built_in">publish</span>(footprint);</span><br><span class="line">      initialized_ = <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>然后updateMap()函数主要获取小车位姿信息，以这个位姿为中心更新地图并添加小车的footprint，最后发布出去。<br>其实分析到这，已经能预料到这是局部地图参数欠优化的问题了。</p><h2 id="2-move-base"><a href="#2-move-base" class="headerlink" title="2.move_base"></a>2.move_base</h2><p>不过我们还是再来看下move_base吧，首先是executeCb()函数：</p><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">MoveBase::executeCb</span><span class="params">(<span class="type">const</span> move_base_msgs::MoveBaseGoalConstPtr&amp; move_base_goal)</span></span>&#123;</span><br><span class="line">    ...</span><br><span class="line">    <span class="keyword">while</span>(n.<span class="built_in">ok</span>())</span><br><span class="line">    &#123;</span><br><span class="line">      ...</span><br><span class="line">      <span class="keyword">if</span>(as_-&gt;<span class="built_in">isPreemptRequested</span>())&#123;...</span><br><span class="line">      ...</span><br><span class="line">      <span class="comment">//the real work on pursuing a goal is done here</span></span><br><span class="line">      <span class="type">bool</span> done = <span class="built_in">executeCycle</span>(goal, global_plan);</span><br><span class="line">      <span class="comment">//if we&#x27;re done, then we&#x27;ll return from execute</span></span><br><span class="line">      <span class="keyword">if</span>(done)</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">      ...</span><br><span class="line">      r.<span class="built_in">sleep</span>();</span><br><span class="line">      <span class="comment">//make sure to sleep for the remainder of our cycle time</span></span><br><span class="line">      <span class="keyword">if</span>(r.<span class="built_in">cycleTime</span>() &gt; ros::<span class="built_in">Duration</span>(<span class="number">1</span> / controller_frequency_) &amp;&amp; state_ == CONTROLLING)</span><br><span class="line">        <span class="built_in">ROS_WARN</span>(<span class="string">&quot;Control loop missed its desired rate of %.4fHz... the loop actually took %.4f seconds&quot;</span>, controller_frequency_, r.<span class="built_in">cycleTime</span>().<span class="built_in">toSec</span>());</span><br><span class="line">    &#125;</span><br><span class="line">    ...</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure><p>可以很方便地看出executeCb()函数一直在检测是否有新的抢占试请求（即新的导航点Nav Goal）,有的话他会调用plan线程为新目标规划全局路径，其次他会一直执行executeCycle()函数直到done为真，即到达目标点才会退出，没到终点的话借助sleep()方法来满足我们设定的控制频率，最后是我们报警告的地方，当以上代码的执行时间大于设定的控制时间时就会警告。<br>那是哪段代码执行太久了呢？新目标在小车运行中我们是没有添加的，而且即使添加了目标，也只是调用一个plan线程在外面并行地规划全局路径，这里的代码会继续执行下去，那就到executeCycle()这个函数了，代码如下，同样，无关的代码被我省略了。</p><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">bool</span> <span class="title">MoveBase::executeCycle</span><span class="params">(geometry_msgs::PoseStamped&amp; goal, std::vector&lt;geometry_msgs::PoseStamped&gt;&amp; global_plan)</span></span>&#123;</span><br><span class="line">    ...</span><br><span class="line">    <span class="comment">//we need to be able to publish velocity commands</span></span><br><span class="line">    geometry_msgs::Twist cmd_vel;</span><br><span class="line">    ...</span><br><span class="line">    <span class="comment">//the move_base state machine, handles the control logic for navigation</span></span><br><span class="line">    <span class="keyword">switch</span>(state_)&#123;</span><br><span class="line">      <span class="comment">//if we are in a planning state, then we&#x27;ll attempt to make a plan</span></span><br><span class="line">      <span class="keyword">case</span> PLANNING:</span><br><span class="line">        ...</span><br><span class="line">      <span class="comment">//if we&#x27;re controlling, we&#x27;ll attempt to find valid velocity commands</span></span><br><span class="line">      <span class="keyword">case</span> CONTROLLING:</span><br><span class="line">        ...</span><br><span class="line">        <span class="keyword">if</span>(tc_-&gt;<span class="built_in">computeVelocityCommands</span>(cmd_vel))&#123;...</span><br><span class="line">      <span class="comment">//we&#x27;ll try to clear out space with any user-provided recovery behaviors</span></span><br><span class="line">      <span class="keyword">case</span> CLEARING:</span><br><span class="line">        ...</span><br><span class="line">    ...</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure><p>这段程序多数时间运行在switch代码块里，它主要帮我们<font color='red'>计算并发布小车的控制命令</font>。不出意外的话，小车一般运行在CONTROLLING状态，所以问题主要出在CONTROLLING case下的这句代码。</p><blockquote><p>tc_-&gt;computeVelocityCommands(cmd_vel)</p></blockquote><p>有关tc_这个指针的定义写在move_base的include目录下的move_base.h文件里</p><blockquote><p>boost::shared_ptr&lt;nav_core::BaseLocalPlanner&gt; tc_;</p></blockquote><p>创建tc_指针实例的代码如下：</p><blockquote><p>tc_ &#x3D; blp_loader_.createInstance(local_planner);</p></blockquote><p>显然它是用来存放LocalPlanner的入口地址，来调用LocalPlanner方法的。LocalPlanner有多种选择，但逻辑应该都差不多，以我们用的teb_local_planner为例来看下问题。</p><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">bool</span> <span class="title">TebLocalPlannerROS::computeVelocityCommands</span><span class="params">(geometry_msgs::Twist&amp; cmd_vel)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  ...</span><br><span class="line">  <span class="type">uint32_t</span> outcome = <span class="built_in">computeVelocityCommands</span>(dummy_pose, dummy_velocity, cmd_vel_stamped, dummy_message);</span><br><span class="line">  ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>进到computeVelocityCommands()函数里可以发现，他继续调用了传入四个参数的computeVelocityCommands()函数来完成我们需要的控制指令cmd_vel的计算。</p><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">uint32_t</span> <span class="title">TebLocalPlannerROS::computeVelocityCommands</span><span class="params">(<span class="type">const</span> geometry_msgs::PoseStamped&amp; pose,<span class="type">const</span> geometry_msgs::TwistStamped&amp; velocity,geometry_msgs::TwistStamped &amp;cmd_vel,std::string &amp;message)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  ...</span><br><span class="line">  <span class="comment">// Update obstacle container with costmap information or polygons provided by a costmap_converter plugin</span></span><br><span class="line">  <span class="keyword">if</span> (costmap_converter_)</span><br><span class="line">    <span class="built_in">updateObstacleContainerWithCostmapConverter</span>();</span><br><span class="line">  <span class="keyword">else</span></span><br><span class="line">    <span class="built_in">updateObstacleContainerWithCostmap</span>();</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// also consider custom obstacles (must be called after other updates, since the container is not cleared)</span></span><br><span class="line">  <span class="built_in">updateObstacleContainerWithCustomObstacles</span>();</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// Now perform the actual planning</span></span><br><span class="line">  <span class="type">bool</span> success = planner_-&gt;<span class="built_in">plan</span>(transformed_plan, &amp;robot_vel_, cfg_.goal_tolerance.free_goal_vel);</span><br><span class="line">  ...</span><br><span class="line">  <span class="comment">// Get the velocity command for this sampling interval</span></span><br><span class="line">  <span class="keyword">if</span> (!planner_-&gt;<span class="built_in">getVelocityCommand</span>(cmd_vel.twist.linear.x, cmd_vel.twist.linear.y, cmd_vel.twist.angular.z, cfg_.trajectory.control_look_ahead_poses))&#123;...</span><br><span class="line">  ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>这个函数做的工作挺多，但许多工作计算量其实并不大，如检查插件初始化、是否到终点、获取机器人位姿、坐标转换等等，这些都不是引发问题的关键，所以我就把他们都省略了。<br>现在可以比较清晰地了解这个函数的作用，<font color="red">先更新局部代价地图上的障碍物信息，在此基础上规划出一条局部路径，然后提取速度指令。</font><br>所以很明显问题出在局部代价地图的更新上。一方面遍历障碍物对它们每个做处理，本身工作量就不少；另一方面他还涉及costmap的获取，地图给到不及时他就没法往下规划了。</p><h1 id="解决措施"><a href="#解决措施" class="headerlink" title="解决措施"></a>解决措施</h1><p>最经济的方式，在&#x2F;Path&#x2F;To&#x2F;Your&#x2F;config目录下，将local_costmap_params.yaml这个文件里的<font color='red'>width和height这两个参数调小，resolution这个参数调大</font>即可。</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> 实用教程 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> ROS </tag>
+            
+            <tag> 自动驾驶 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>关于opencv-python的一点使用说明</title>
+      <link href="/posts/5699/"/>
+      <url>/posts/5699/</url>
+      
+        <content type="html"><![CDATA[<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><h1 id="关于本文"><a href="#关于本文" class="headerlink" title="关于本文"></a>关于本文</h1><ol><li>why opencv？<br>牛逼好玩</li><li>why python？<br>简单好用</li></ol><h1 id="关于安装"><a href="#关于安装" class="headerlink" title="关于安装"></a>关于安装</h1><p>为避免各种意外，使用pip安装opencv时，键入安装命令如下，信任并使用国内镜像源</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install opencv-python -i http://mirrors.aliyun.com/pypi/simple/ --trusted-host mirrors.aliyun.com</span><br></pre></td></tr></table></figure>]]></content>
+      
+      
+      <categories>
+          
+          <category> 实用教程 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> opencv </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>无处安放的根号-1</title>
+      <link href="/posts/30320/"/>
+      <url>/posts/30320/</url>
+      
+        <content type="html"><![CDATA[<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><h1 id="来玩个游戏吧"><a href="#来玩个游戏吧" class="headerlink" title="来玩个游戏吧"></a>来玩个游戏吧</h1><p>很简单，请先将-2，-1，1，3，$\sqrt{2}$，$\frac{1}{2}$和0，这几个数按顺序放入到下图中合适的位置</p><p><img src="https://s4.ax1x.com/2022/02/06/HKdiyF.png" alt="a_line"></p><h1 id="一把尺子"><a href="#一把尺子" class="headerlink" title="一把尺子"></a>一把尺子</h1><p>自然数、负数、无理数和分数，这几个数很常见，我想你对他们肯定也了如指掌，所以很快我们就做出了一把可以测量所有东西的尺子。</p><p><img src="https://s4.ax1x.com/2022/02/06/HKDS74.png" alt="ruler"></p><blockquote><p>  一点疑惑：在日常生活中，我们也没怎么见尺子上有分数。其实上图中的$\frac{1}{2}$也是多余的，你知道这是为什么么</p></blockquote><h1 id="神秘的-sqrt-1"><a href="#神秘的-sqrt-1" class="headerlink" title="神秘的$\sqrt{-1}$"></a>神秘的$\sqrt{-1}$</h1><hr><p></br></br><br>对上面这些数我就不做过多介绍了，现在请将本次游戏主角$\sqrt{-1}$也放到上图中合适的位置吧。</p><center>（如果你能放对位置，带上你的思路来找我领奖励吧）</center></br></br></br><hr><blockquote><p>  提示：如果你试图把它放到那条我们画出来的尺子上的话，那就别白费力气了，他跟那些数字根本不是一路人。</p></blockquote><h1 id="sqrt-1-的特性"><a href="#sqrt-1-的特性" class="headerlink" title="$\sqrt{-1}$的特性"></a>$\sqrt{-1}$的特性</h1><p>看样子想把它放上去并不容易，那我们还是从仅有的线索-1出发吧。<br>-1又是怎么来的呢？对1取反出来的。还能是两个$\sqrt{-1}$相乘出来的对吧？<br>那如果我们继续乘$\sqrt{-1}$会怎么样呢？</p><ul><li>$\sqrt{-1}$ x $\sqrt{-1}$ &#x3D; -1</li><li>-1 x $\sqrt{-1}$ &#x3D; -$\sqrt{-1}$</li><li>-$\sqrt{-1}$ x $\sqrt{-1}$ &#x3D; 1</li><li>1 x $\sqrt{-1}$ &#x3D; $\sqrt{-1}$</li></ul><p>会旋转，你会反复地得到上面这四个数-1，-$\sqrt{-1}$，1，$\sqrt{-1}$，就像下图一样。</p><p><img src="https://s4.ax1x.com/2022/02/07/HMsgGd.png" alt="sqrt-1"></p><h1 id="答案"><a href="#答案" class="headerlink" title="答案"></a>答案</h1><p>讲到这，答案已经明了。不过我还是想说一句，$\sqrt{-1}$的意义不只是让尺子旋转了起来，更重要的是他让数字插上了翅膀，逃离了一维世界。</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> 当然我在乱讲三七 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 数学 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>原子会说话</title>
       <link href="/posts/53430/"/>
       <url>/posts/53430/</url>
@@ -108,7 +185,7 @@
       <link href="/posts/37904/"/>
       <url>/posts/37904/</url>
       
-        <content type="html"><![CDATA[<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><h1 id="Hi"><a href="#Hi" class="headerlink" title="Hi"></a>Hi</h1><p style="text-indent:2em">偶尔想起来了什么,这里就会多点东西</p><h2 id="3-12-2021"><a href="#3-12-2021" class="headerlink" title="3.12.2021"></a>3.12.2021</h2><p>每个人都是那么闪耀<br>如同一片星海<br>而太阳，与其说它照亮了万物<br>倒不如说它遮住了星空<br>但是人吧，不得不向前看<br>所以也就少有抬头看的机会<br>不过终有一天<br>星星会铺满这片天空</p>]]></content>
+        <content type="html"><![CDATA[<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><h1 id="Hi"><a href="#Hi" class="headerlink" title="Hi"></a>Hi</h1><center>偶尔想起来了什么,这里就会多点东西</center><h2 id="太阳"><a href="#太阳" class="headerlink" title="太阳"></a>太阳</h2><p> 每个人都是那么闪耀<br> 如同一片星海<br> 而太阳，与其说它照亮了万物<br> 倒不如说它遮住了星空<br> 但是人吧，不得不向前看<br> 所以也就少有抬头看的机会<br> 不过终有一天<br> 星星会铺满这片天空</p><p align="right">3.12.2021</p><h2 id="外婆"><a href="#外婆" class="headerlink" title="外婆"></a>外婆</h2><p>昨天的这个时候<br>你突然邀请我<br>观看这场烟与火的表演<br>秸秆燃烧的味道<br>跟小时候一模一样<br>也许在你眼中<br>我还是一个孩子模样<br>多么希望被子里塞的是枕头<br>而你躲在床底下偷着乐<br>这一切都只是你的一个恶作剧</p><p align="right">1.8.2022</p>]]></content>
       
       
       <categories>
@@ -170,6 +247,8 @@
       
         <tags>
             
+            <tag> 随记 </tag>
+            
             <tag> 骑行 </tag>
             
         </tags>
@@ -194,6 +273,8 @@
       
       
         <tags>
+            
+            <tag> 随记 </tag>
             
             <tag> 骑行 </tag>
             
@@ -220,6 +301,8 @@
       
         <tags>
             
+            <tag> 随记 </tag>
+            
             <tag> 骑行 </tag>
             
         </tags>
@@ -245,6 +328,8 @@
       
         <tags>
             
+            <tag> 随记 </tag>
+            
             <tag> 骑行 </tag>
             
         </tags>
@@ -258,7 +343,7 @@
       <link href="/posts/53867/"/>
       <url>/posts/53867/</url>
       
-        <content type="html"><![CDATA[<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><h1 id="出发"><a href="#出发" class="headerlink" title="出发"></a>出发</h1><p>第二天，环青海湖的骑行正式开始了。计划这天从西海镇到江西沟，大概100多公里，中午湖东种羊场吃饭。</p><p>没有太多的思考，我们包含着热情上路了，发现跟我们一样今天出发的人还挺多的，此时的我们并没有意识到接下来的挑战有多离谱。甚至我还被一路的油菜花吸引了，还没真正看到青海湖，我已经陶醉在花海中。发出不虚此行的感叹。</p><p><img src="https://s3.ax1x.com/2020/12/10/riEDXQ.md.jpg" alt="alt油菜"></p><p>实际上我们正在经历漫长的爬坡阶段，但是周围的景色麻痹了我的神经，当我实在踏不动踏板的时候，我明智地决定推车了。当终于把车推上第一个小山头的时候，一群人早已站在这里休息，欣赏着对面山坡上的羊群。</p><p><img src="https://s3.ax1x.com/2020/12/10/rF0uvT.md.jpg" alt="alt羊群"></p><p>没有做过多的停留我又出发了，因为让大家等我太久属实不好。毕竟这时候连青海湖塔楼(青海湖入口标志性建筑)都还没到。之后在机械地重复踩踏踏板中，热情都给我踏飞咯。</p><h1 id="青海湖塔楼"><a href="#青海湖塔楼" class="headerlink" title="青海湖塔楼"></a>青海湖塔楼</h1><p>幸运的是，不断的爬坡后终于在一次极为离谱的长下坡中，我体会到了单车速度40码的激情，也意识到了目标已经近在咫尺。一波斗志激发，眼前终于出现了塔楼。</p><p><img src="https://s3.ax1x.com/2020/12/10/riEUtP.md.jpg" alt="alt塔楼"></p><p>经典打卡点，给自己也来了一张。当时内心老激动了，感谢摄影师HS和他的爱车。</p><h1 id="青海湖"><a href="#青海湖" class="headerlink" title="青海湖"></a>青海湖</h1><p>过了塔楼没多远的路，就看到青海湖了。在晴好的天气下，远远的看过去海天一线。就跟下图说的那样，青海湖，中国最美丽的湖泊。</p><p><img src="https://s3.ax1x.com/2020/12/10/riE3OH.md.jpg" alt="alt青海湖"></p><p>接下来又是长下坡，所以可想而知，我们当时爬了是有多长的坡。</p><p><img src="https://s3.ax1x.com/2020/12/10/rF0MKU.md.jpg" alt="alt长下坡"></p><p>进入青海湖后首先看到的是一片沙漠，挺神奇的，就在湖边上。</p><p><img src="https://s3.ax1x.com/2020/12/10/riEQSO.md.jpg" alt="alt沙漠"></p><p>好奇心很快又被重复性的踩踏行为，踩在底下。</p><h1 id="湖东种羊场"><a href="#湖东种羊场" class="headerlink" title="湖东种羊场"></a>湖东种羊场</h1><p>不知骑行了多长的路，牛、马、羊开始多起来了，终于到种羊场了。</p><p><img src="https://s3.ax1x.com/2020/12/10/riEKfK.md.jpg" alt="alt种羊场"></p><p>甚至还看到了牦牛，近距离拍了张照片。</p><p><img src="https://s3.ax1x.com/2020/12/10/riEGmd.md.jpg" alt="alt牦牛"></p><p>到餐馆前一副奇怪的风景吸引了我，草地上孤零零的一棵树，这个场景有没有觉得挺美的。</p><p><img src="https://s3.ax1x.com/2020/12/10/riEuY6.md.jpg" alt="alt孤零零的一棵树"></p><p>餐馆吃过饭，小憩了一会儿，我们又出发了。</p><p>虽然正是太阳最猛的时候，但此时在环湖东路上骑行尤其舒爽。从湖所在的方向吹来阵阵凉风，而我们正好下坡，只要负责把脸迎上去接风吹就完了。</p><p>此时望着前方，青海湖越来越近了。</p><p>骑到一处不少人下去观湖的地方，我也下车了。正好我们四个人都有下去观湖的想法，大伙鱼贯而下，一睹圣湖真容。</p><p><img src="https://s3.ax1x.com/2020/12/10/riEJ0A.md.jpg" alt="alt近看青海湖"></p><p>当时天气不好，所以这个真容看上去可能比想象中差了点。</p><h1 id="国道109"><a href="#国道109" class="headerlink" title="国道109"></a>国道109</h1><p>从环湖东路骑到国道109后，噩梦开始了。天气已经不对了，下起了小雨，阿潘身体不适坐车帮我们先去订旅馆了。但我们还在前往二郎剑景区的路上。</p><p>到了二郎剑，从我们的视角(景区外)看二郎剑景区：</p><p><img src="https://s3.ax1x.com/2020/12/10/riEsmj.md.jpg" alt="alt二郎剑"></p><p>风景可能到此告个段落了，因为接下来就遇到糟糕的天气了-阵阵阴雨，还有漫长的缓上坡。</p><p>冷的可怕，当时鞋子已经完全湿透，脚冷。裤子也湿了大半，几乎沉重的蹬不动单车了。这段路上我几乎就是边推边蹬过来的，真的磨练一个人。</p><p>路上看到了一排白塔，终点不远了，我这样安慰自己。</p><p><img src="https://s3.ax1x.com/2020/12/10/riEaff.md.jpg" alt="alt白塔"></p><h1 id="江西沟"><a href="#江西沟" class="headerlink" title="江西沟"></a>江西沟</h1><p>终于到了，如同长征胜利完成一般。</p><p><img src="https://s3.ax1x.com/2020/12/10/riE01S.md.jpg" alt="alt江西沟"></p><h1 id="记录总结"><a href="#记录总结" class="headerlink" title="记录总结"></a>记录总结</h1><p>一行四人都到位了，没有一人落下，完美。只是阿潘有点发烧，担心他接下来的行程是否还能坚持走完。</p><h2 id="行程数据"><a href="#行程数据" class="headerlink" title="行程数据"></a>行程数据</h2><p>因为没有一开始就记录数据，所以我只知道，从青海湖入口塔楼到江西沟，我们骑了有84.4公里。参考HS的记录，这天骑了有100公里。</p><p><img src="https://s3.ax1x.com/2020/12/10/riEYTI.jpg" alt="alt记录"></p><h2 id="身边的悲剧"><a href="#身边的悲剧" class="headerlink" title="身边的悲剧"></a>身边的悲剧</h2><blockquote><p>正好发生在我们住宿的旅馆，发生在一位陌生骑友身上。有点难过。</p></blockquote><p>我所听闻的事情是这样的，这位骑友骑得挺快的，先到了江西沟，定了这个旅馆。然而跟他同行的朋友还在后面所以他又骑回去了。见面后得知他们放弃了骑到江西沟的念头，并在二郎剑定了旅馆后。他又骑回江西沟退钱去了，正好在旅馆前，从车上摔下来把膝盖骨摔坏了。</p><p>我的所见，在国道109上骑行的时候就听到了救护车的声音，当时不以为意，现在回想这身边发生的事不免害怕。</p><p>出门在外还是安全第一，希望这位骑友早日康复。这件事后我一路都很小心。</p>]]></content>
+        <content type="html"><![CDATA[<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><h1 id="出发"><a href="#出发" class="headerlink" title="出发"></a>出发</h1><p>第二天，环青海湖的骑行正式开始了。计划这天从西海镇到江西沟，大概100多公里，中午湖东种羊场吃饭。</p><p>没有太多的思考，我们包含着热情上路了，发现跟我们一样今天出发的人还挺多的，此时的我们并没有意识到接下来的挑战有多离谱。甚至我还被一路的油菜花吸引了，还没真正看到青海湖，我已经陶醉在花海中。发出不虚此行的感叹。</p><p><img src="https://s3.ax1x.com/2020/12/10/riEDXQ.md.jpg" alt="alt油菜"></p><p>实际上我们正在经历漫长的爬坡阶段，但是周围的景色麻痹了我的神经，当我实在踏不动踏板的时候，我明智地决定推车了。当终于把车推上第一个小山头的时候，一群人早已站在这里休息，欣赏着对面山坡上的羊群。</p><p><img src="https://s3.ax1x.com/2020/12/10/rF0uvT.md.jpg" alt="alt羊群"></p><p>没有做过多的停留我又出发了，因为让大家等我太久属实不好。毕竟这时候连青海湖塔楼(青海湖入口标志性建筑)都还没到。之后在机械地重复踩踏踏板中，热情都给我踏飞咯。</p><h1 id="青海湖塔楼"><a href="#青海湖塔楼" class="headerlink" title="青海湖塔楼"></a>青海湖塔楼</h1><p>幸运的是，不断的爬坡后终于在一次极为离谱的长下坡中，我体会到了单车速度40码的激情，也意识到了目标已经近在咫尺。一波斗志激发，眼前终于出现了塔楼。</p><p><img src="https://s3.ax1x.com/2020/12/10/riEUtP.md.jpg" alt="alt塔楼"></p><p>经典打卡点，给自己也来了一张。当时内心老激动了，感谢摄影师HS和他的爱车。</p><h1 id="青海湖"><a href="#青海湖" class="headerlink" title="青海湖"></a>青海湖</h1><p>过了塔楼没多远的路，就看到青海湖了。在晴好的天气下，远远的看过去海天一线。就跟下图说的那样，青海湖，中国最美丽的湖泊。</p><p><img src="https://s3.ax1x.com/2020/12/10/riE3OH.md.jpg" alt="alt青海湖"></p><p>接下来又是长下坡，所以可想而知，我们当时爬了是有多长的坡。</p><p><img src="https://s3.ax1x.com/2020/12/10/rF0MKU.md.jpg" alt="alt长下坡"></p><p>进入青海湖后首先看到的是一片沙漠，挺神奇的，就在湖边上。</p><p><img src="https://s3.ax1x.com/2020/12/10/riEQSO.md.jpg" alt="alt沙漠"></p><p>好奇心很快又被重复性的踩踏行为，踩在底下。</p><h1 id="湖东种羊场"><a href="#湖东种羊场" class="headerlink" title="湖东种羊场"></a>湖东种羊场</h1><p>不知骑行了多长的路，牛、马、羊开始多起来了，终于到种羊场了。</p><p><img src="https://s3.ax1x.com/2020/12/10/riEKfK.md.jpg" alt="alt种羊场"></p><p>甚至还看到了牦牛，近距离拍了张照片。</p><p><img src="https://s3.ax1x.com/2020/12/10/riEGmd.md.jpg" alt="alt牦牛"></p><p>到餐馆前一副奇怪的风景吸引了我，草地上孤零零的一棵树，这个场景有没有觉得挺美的。</p><p><img src="https://s3.ax1x.com/2020/12/10/riEuY6.md.jpg" alt="alt孤零零的一棵树"></p><p>餐馆吃过饭，小憩了一会儿，我们又出发了。</p><p>虽然正是太阳最猛的时候，但此时在环湖东路上骑行尤其舒爽。从湖所在的方向吹来阵阵凉风，而我们正好下坡，只要负责把脸迎上去接风吹就完了。</p><p>此时望着前方，青海湖越来越近了。</p><p>骑到一处不少人下去观湖的地方，我也下车了。正好我们四个人都有下去观湖的想法，大伙鱼贯而下，一睹圣湖真容。</p><p><img src="https://s3.ax1x.com/2020/12/10/riEJ0A.md.jpg" alt="alt近看青海湖"></p><p>当时天气不好，所以这个真容看上去可能比想象中差了点。</p><h1 id="国道109"><a href="#国道109" class="headerlink" title="国道109"></a>国道109</h1><p>从环湖东路骑到国道109后，噩梦开始了。天气已经不对了，下起了小雨，阿潘身体不适坐车帮我们先去订旅馆了。但我们还在前往二郎剑景区的路上。</p><p>到了二郎剑，从我们的视角(景区外)看二郎剑景区：</p><p><img src="https://s3.ax1x.com/2020/12/10/riEsmj.md.jpg" alt="alt二郎剑"></p><p>风景可能到此告个段落了，因为接下来就遇到糟糕的天气了-阵阵阴雨，还有漫长的缓上坡。</p><p>冷的可怕，当时鞋子已经完全湿透，脚冷。裤子也湿了大半，几乎沉重的蹬不动单车了。这段路上我几乎就是边推边蹬过来的，真的磨练一个人。</p><p>路上看到了一排白塔，终点不远了，我这样安慰自己。</p><p><img src="https://s3.ax1x.com/2020/12/10/riEaff.md.jpg" alt="alt白塔"></p><h1 id="江西沟"><a href="#江西沟" class="headerlink" title="江西沟"></a>江西沟</h1><p>终于到了，如同长征胜利完成一般。</p><p><img src="https://s3.ax1x.com/2020/12/10/riE01S.md.jpg" alt="alt江西沟"></p><h1 id="记录总结"><a href="#记录总结" class="headerlink" title="记录总结"></a>记录总结</h1><p>一行四人都到位了，没有一人落下，完美。只是阿潘有点发烧，担心他接下来的行程是否还能坚持走完。</p><h2 id="行程数据"><a href="#行程数据" class="headerlink" title="行程数据"></a>行程数据</h2><p>因为没有一开始就记录数据，所以我只知道，从青海湖入口塔楼到江西沟，我们骑了有84.4公里。参考HS的记录，这天骑了有100公里。</p><p><img src="https://s3.ax1x.com/2020/12/10/riEYTI.jpg" alt="alt记录"></p><h2 id="身边的悲剧"><a href="#身边的悲剧" class="headerlink" title="身边的悲剧"></a>身边的悲剧</h2><blockquote><p>正好发生在我们住宿的旅馆，发生在一位陌生骑友身上。有点难过。</p></blockquote><p>我所听闻的事情是这样的，这位骑友骑得挺快的，先到了江西沟，定了这个旅馆。然而跟他同行的朋友还在后面所以他又骑回去了。见面后得知他们放弃了骑到江西沟的念头，并在二郎剑定了旅馆后。他又骑回江西沟退钱去了，正好在旅馆前，从车上摔下来把膝盖骨摔坏了。</p><p>我的所见，在国道109上骑行的时候就听到了救护车的声音，当时不以为意，现在回想这身边发生的事不免害怕。</p><p>出门在外还是安全第一，希望这位骑友早日康复。</p>]]></content>
       
       
       <categories>
@@ -269,6 +354,8 @@
       
       
         <tags>
+            
+            <tag> 随记 </tag>
             
             <tag> 骑行 </tag>
             
@@ -294,6 +381,8 @@
       
       
         <tags>
+            
+            <tag> 随记 </tag>
             
             <tag> 骑行 </tag>
             

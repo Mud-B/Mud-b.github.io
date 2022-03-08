@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="zh-CN" color-mode="light">
+
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="keywords" content="" />
+  <meta name="author" content="Mud B" />
+  <meta name="description" content="blog" />
+  
+  
+  <title>
+    
+      关于ROS Navigation小车失控的问题 
+      
+      
+      |
+    
+     MB&#39;s Blog
+  </title>
+
+  
+    <link rel="apple-touch-icon" href="/images/icon.png">
+    <link rel="icon" href="/images/icon.png">
+  
+
+  <!-- Raleway-Font -->
+  <link href="https://fonts.googleapis.com/css?family=Raleway&display=swap" rel="stylesheet">
+
+  <!-- hexo site css -->
+  
+<link rel="stylesheet" href="/css/color-scheme.css">
+<link rel="stylesheet" href="/css/base.css">
+<link rel="stylesheet" href="/iconfont/iconfont.css">
+<link rel="stylesheet" href="/css/github-markdown.css">
+<link rel="stylesheet" href="/css/highlight.css">
+<link rel="stylesheet" href="/css/comments.css">
+
+
+  <!-- jquery3.3.1 -->
+  <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+
+  <!-- fancybox -->
+  <link href="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.css" rel="stylesheet">
+  <script async src="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.js"></script>
+  
+<script src="/js/fancybox.js"></script>
+
+
+  
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-3HV30FYYBT"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-3HV30FYYBT');
+    </script>
+  
+
+  <script>
+    var html = document.documentElement
+    const colorMode = localStorage.getItem('color-mode')
+    if (colorMode) {
+      document.documentElement.setAttribute('color-mode', colorMode)
+    }
+  </script>
+
+<meta name="generator" content="Hexo 6.0.0"><link rel="alternate" href="/atom.xml" title="MB's Blog" type="application/atom+xml">
+</head>
+
+
+  <body>
+    <div id="app">
+      <div class="header">
+  <div class="avatar">
+    <a href="/">
+      <!-- 头像取消懒加载，添加no-lazy -->
+      
+        <img no-lazy src="/images/a.jpg" alt="">
+      
+    </a>
+    <div class="nickname"><a href="/">喊我MB</a></div>
+  </div>
+  <div class="navbar">
+    <ul>
+      
+        <li class="nav-item" data-path="/">
+          <a href="/">主页</a>
+        </li>
+      
+        <li class="nav-item" data-path="/archives/">
+          <a href="/archives/">归档</a>
+        </li>
+      
+        <li class="nav-item" data-path="/categories/">
+          <a href="/categories/">分类</a>
+        </li>
+      
+        <li class="nav-item" data-path="/tags/">
+          <a href="/tags/">标签</a>
+        </li>
+      
+        <li class="nav-item" data-path="/friends/">
+          <a href="/friends/">友链</a>
+        </li>
+      
+        <li class="nav-item" data-path="/about">
+          <a href="/about">关于</a>
+        </li>
+      
+    </ul>
+  </div>
+</div>
+
+
+<script src="/js/activeNav.js"></script>
+
+
+
+      <div class="flex-container">
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+<!-- LaTex Display -->
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script type="text/javascript" id="MathJax-script" async
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+</script>
+<script>
+MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']]
+  }
+};
+</script>
+
+
+
+  
+
+  
+
+  
+
+  
+  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
+  <div class="container post-details" id="post-details">
+    <div class="post-content">
+      <div class="post-title">关于ROS Navigation小车失控的问题</div>
+      <div class="post-attach">
+        <span class="post-pubtime">
+          <i class="iconfont icon-updatetime" title="更新时间"></i>
+          2022-02-28 20:44:49
+        </span>
+        
+              <span class="post-categories">
+                <i class="iconfont icon-bookmark" title="分类"></i>
+                
+                <span class="span--category">
+                  <a href="/categories/%E5%AE%9E%E7%94%A8%E6%95%99%E7%A8%8B/" title="实用教程">
+                    <b>#</b> 实用教程
+                  </a>
+                </span>
+                
+              </span>
+          
+              <span class="post-tags">
+                <i class="iconfont icon-tags" title="标签"></i>
+                
+                <span class="span--tag">
+                  <a href="/tags/ROS/" title="ROS">
+                    <b>#</b> ROS
+                  </a>
+                </span>
+                
+                <span class="span--tag">
+                  <a href="/tags/%E8%87%AA%E5%8A%A8%E9%A9%BE%E9%A9%B6/" title="自动驾驶">
+                    <b>#</b> 自动驾驶
+                  </a>
+                </span>
+                
+              </span>
+          
+        </br>
+        <span class="post-count">字数：1.5k</span>
+        <span class="post-count">阅读时长：6min</span>
+      </div>
+      <div class="markdown-body">
+        <h1 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h1><p>当你在rivz看到小车规划出来的全局路径是没问题的，但小车却会跑歪，那就说明小车失控了。</p>
+<p>这里失控的原因大概率是控制命令下发不及时，但控制频率丢失大多会跟local_costmap的更新频率丢失一起出现，在小车程序运行的终端会打印类似如下的警告：</p>
+<blockquote>
+<p>[Warn]： Control loop missed its desired rate of xxxHz… the loop actually took xx seconds</br><br>[Warn]： Map update loop missed its desired rate of xxxHz… the loop actually took xx seconds</p>
+</blockquote>
+<h1 id="原因追溯"><a href="#原因追溯" class="headerlink" title="原因追溯"></a>原因追溯</h1><p>该现象主要是<font color='red'>小车周边代价地图更新太慢</font>导致的，而地图更新慢，跟生成代价地图的参数以及小车自身的算力有关。<a href="./#%E8%A7%A3%E5%86%B3%E6%8E%AA%E6%96%BD">&gt; 直接看解决措施 &lt;</a><br>根据终端报的警告，我们可以把问题追溯到move_base.cpp文件下的executeCb()函数和costmap_2d_ros.cpp文件下的mapUpdateLoop()函数。</p>
+<h2 id="1-costmap"><a href="#1-costmap" class="headerlink" title="1.costmap"></a>1.costmap</h2><p>可以先看下costmap报警告的代码，跟我们遇到的问题关系不大的代码，我都用…把他们省略了，这样方便我们认识代码和排查原因。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">Costmap2DROS::mapUpdateLoop</span><span class="params">(<span class="type">double</span> frequency)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  ...</span><br><span class="line">  <span class="keyword">while</span> (nh.<span class="built_in">ok</span>() &amp;&amp; !map_update_thread_shutdown_)</span><br><span class="line">  &#123;</span><br><span class="line">    ...</span><br><span class="line">    </span><br><span class="line">    <span class="built_in">updateMap</span>();</span><br><span class="line">    ...</span><br><span class="line">    r.<span class="built_in">sleep</span>();</span><br><span class="line">    <span class="comment">// make sure to sleep for the remainder of our cycle time</span></span><br><span class="line">    <span class="keyword">if</span> (r.<span class="built_in">cycleTime</span>() &gt; ros::<span class="built_in">Duration</span>(<span class="number">1</span> / frequency))</span><br><span class="line">      <span class="built_in">ROS_WARN</span>(<span class="string">&quot;Map update loop missed its desired rate of %.4fHz... the loop actually took %.4f seconds&quot;</span>, frequency,</span><br><span class="line">               r.<span class="built_in">cycleTime</span>().<span class="built_in">toSec</span>());</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>很明显mapUpdateLoop()这个函数一直在调用updateMap()函数来更新局部地图，然后检测更新超时就报警。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">Costmap2DROS::updateMap</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (!stop_updates_)</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="comment">// get global pose</span></span><br><span class="line">    geometry_msgs::PoseStamped pose;</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">getRobotPose</span> (pose))</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="type">double</span> x = pose.pose.position.x,</span><br><span class="line">             y = pose.pose.position.y,</span><br><span class="line">             yaw = tf2::<span class="built_in">getYaw</span>(pose.pose.orientation);</span><br><span class="line">      layered_costmap_-&gt;<span class="built_in">updateMap</span>(x, y, yaw);</span><br><span class="line">      geometry_msgs::PolygonStamped footprint;</span><br><span class="line">      footprint.header.frame_id = global_frame_;</span><br><span class="line">      footprint.header.stamp = ros::Time::<span class="built_in">now</span>();</span><br><span class="line">      <span class="built_in">transformFootprint</span>(x, y, yaw, padded_footprint_, footprint);</span><br><span class="line">      footprint_pub_.<span class="built_in">publish</span>(footprint);</span><br><span class="line">      initialized_ = <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>然后updateMap()函数主要获取小车位姿信息，以这个位姿为中心更新地图并添加小车的footprint，最后发布出去。<br>其实分析到这，已经能预料到这是局部地图参数欠优化的问题了。</p>
+<h2 id="2-move-base"><a href="#2-move-base" class="headerlink" title="2.move_base"></a>2.move_base</h2><p>不过我们还是再来看下move_base吧，首先是executeCb()函数：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">MoveBase::executeCb</span><span class="params">(<span class="type">const</span> move_base_msgs::MoveBaseGoalConstPtr&amp; move_base_goal)</span></span>&#123;</span><br><span class="line">    ...</span><br><span class="line">    <span class="keyword">while</span>(n.<span class="built_in">ok</span>())</span><br><span class="line">    &#123;</span><br><span class="line">      ...</span><br><span class="line">      <span class="keyword">if</span>(as_-&gt;<span class="built_in">isPreemptRequested</span>())&#123;...</span><br><span class="line">      ...</span><br><span class="line">      <span class="comment">//the real work on pursuing a goal is done here</span></span><br><span class="line">      <span class="type">bool</span> done = <span class="built_in">executeCycle</span>(goal, global_plan);</span><br><span class="line">      <span class="comment">//if we&#x27;re done, then we&#x27;ll return from execute</span></span><br><span class="line">      <span class="keyword">if</span>(done)</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">      ...</span><br><span class="line">      r.<span class="built_in">sleep</span>();</span><br><span class="line">      <span class="comment">//make sure to sleep for the remainder of our cycle time</span></span><br><span class="line">      <span class="keyword">if</span>(r.<span class="built_in">cycleTime</span>() &gt; ros::<span class="built_in">Duration</span>(<span class="number">1</span> / controller_frequency_) &amp;&amp; state_ == CONTROLLING)</span><br><span class="line">        <span class="built_in">ROS_WARN</span>(<span class="string">&quot;Control loop missed its desired rate of %.4fHz... the loop actually took %.4f seconds&quot;</span>, controller_frequency_, r.<span class="built_in">cycleTime</span>().<span class="built_in">toSec</span>());</span><br><span class="line">    &#125;</span><br><span class="line">    ...</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<p>可以很方便地看出executeCb()函数一直在检测是否有新的抢占试请求（即新的导航点Nav Goal）,有的话他会调用plan线程为新目标规划全局路径，其次他会一直执行executeCycle()函数直到done为真，即到达目标点才会退出，没到终点的话借助sleep()方法来满足我们设定的控制频率，最后是我们报警告的地方，当以上代码的执行时间大于设定的控制时间时就会警告。<br>那是哪段代码执行太久了呢？新目标在小车运行中我们是没有添加的，而且即使添加了目标，也只是调用一个plan线程在外面并行地规划全局路径，这里的代码会继续执行下去，那就到executeCycle()这个函数了，代码如下，同样，无关的代码被我省略了。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">bool</span> <span class="title">MoveBase::executeCycle</span><span class="params">(geometry_msgs::PoseStamped&amp; goal, std::vector&lt;geometry_msgs::PoseStamped&gt;&amp; global_plan)</span></span>&#123;</span><br><span class="line">    ...</span><br><span class="line">    <span class="comment">//we need to be able to publish velocity commands</span></span><br><span class="line">    geometry_msgs::Twist cmd_vel;</span><br><span class="line">    ...</span><br><span class="line">    <span class="comment">//the move_base state machine, handles the control logic for navigation</span></span><br><span class="line">    <span class="keyword">switch</span>(state_)&#123;</span><br><span class="line">      <span class="comment">//if we are in a planning state, then we&#x27;ll attempt to make a plan</span></span><br><span class="line">      <span class="keyword">case</span> PLANNING:</span><br><span class="line">        ...</span><br><span class="line">      <span class="comment">//if we&#x27;re controlling, we&#x27;ll attempt to find valid velocity commands</span></span><br><span class="line">      <span class="keyword">case</span> CONTROLLING:</span><br><span class="line">        ...</span><br><span class="line">        <span class="keyword">if</span>(tc_-&gt;<span class="built_in">computeVelocityCommands</span>(cmd_vel))&#123;...</span><br><span class="line">      <span class="comment">//we&#x27;ll try to clear out space with any user-provided recovery behaviors</span></span><br><span class="line">      <span class="keyword">case</span> CLEARING:</span><br><span class="line">        ...</span><br><span class="line">    ...</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<p>这段程序多数时间运行在switch代码块里，它主要帮我们<font color='red'>计算并发布小车的控制命令</font>。不出意外的话，小车一般运行在CONTROLLING状态，所以问题主要出在CONTROLLING case下的这句代码。</p>
+<blockquote>
+<p>tc_-&gt;computeVelocityCommands(cmd_vel)</p>
+</blockquote>
+<p>有关tc_这个指针的定义写在move_base的include目录下的move_base.h文件里</p>
+<blockquote>
+<p>boost::shared_ptr&lt;nav_core::BaseLocalPlanner&gt; tc_;</p>
+</blockquote>
+<p>创建tc_指针实例的代码如下：</p>
+<blockquote>
+<p>tc_ &#x3D; blp_loader_.createInstance(local_planner);</p>
+</blockquote>
+<p>显然它是用来存放LocalPlanner的入口地址，来调用LocalPlanner方法的。LocalPlanner有多种选择，但逻辑应该都差不多，以我们用的teb_local_planner为例来看下问题。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">bool</span> <span class="title">TebLocalPlannerROS::computeVelocityCommands</span><span class="params">(geometry_msgs::Twist&amp; cmd_vel)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  ...</span><br><span class="line">  <span class="type">uint32_t</span> outcome = <span class="built_in">computeVelocityCommands</span>(dummy_pose, dummy_velocity, cmd_vel_stamped, dummy_message);</span><br><span class="line">  ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>进到computeVelocityCommands()函数里可以发现，他继续调用了传入四个参数的computeVelocityCommands()函数来完成我们需要的控制指令cmd_vel的计算。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">uint32_t</span> <span class="title">TebLocalPlannerROS::computeVelocityCommands</span><span class="params">(<span class="type">const</span> geometry_msgs::PoseStamped&amp; pose,<span class="type">const</span> geometry_msgs::TwistStamped&amp; velocity,geometry_msgs::TwistStamped &amp;cmd_vel,std::string &amp;message)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  ...</span><br><span class="line">  <span class="comment">// Update obstacle container with costmap information or polygons provided by a costmap_converter plugin</span></span><br><span class="line">  <span class="keyword">if</span> (costmap_converter_)</span><br><span class="line">    <span class="built_in">updateObstacleContainerWithCostmapConverter</span>();</span><br><span class="line">  <span class="keyword">else</span></span><br><span class="line">    <span class="built_in">updateObstacleContainerWithCostmap</span>();</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// also consider custom obstacles (must be called after other updates, since the container is not cleared)</span></span><br><span class="line">  <span class="built_in">updateObstacleContainerWithCustomObstacles</span>();</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// Now perform the actual planning</span></span><br><span class="line">  <span class="type">bool</span> success = planner_-&gt;<span class="built_in">plan</span>(transformed_plan, &amp;robot_vel_, cfg_.goal_tolerance.free_goal_vel);</span><br><span class="line">  ...</span><br><span class="line">  <span class="comment">// Get the velocity command for this sampling interval</span></span><br><span class="line">  <span class="keyword">if</span> (!planner_-&gt;<span class="built_in">getVelocityCommand</span>(cmd_vel.twist.linear.x, cmd_vel.twist.linear.y, cmd_vel.twist.angular.z, cfg_.trajectory.control_look_ahead_poses))&#123;...</span><br><span class="line">  ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这个函数做的工作挺多，但许多工作计算量其实并不大，如检查插件初始化、是否到终点、获取机器人位姿、坐标转换等等，这些都不是引发问题的关键，所以我就把他们都省略了。<br>现在可以比较清晰地了解这个函数的作用，<font color="red">先更新局部代价地图上的障碍物信息，在此基础上规划出一条局部路径，然后提取速度指令。</font><br>所以很明显问题出在局部代价地图的更新上。一方面遍历障碍物对它们每个做处理，本身工作量就不少；另一方面他还涉及costmap的获取，地图给到不及时他就没法往下规划了。</p>
+<h1 id="解决措施"><a href="#解决措施" class="headerlink" title="解决措施"></a>解决措施</h1><p>最经济的方式，在&#x2F;Path&#x2F;To&#x2F;Your&#x2F;config目录下，将local_costmap_params.yaml这个文件里的<font color='red'>width和height这两个参数调小，resolution这个参数调大</font>即可。</p>
+
+      </div>
+      
+        <div class="prev-or-next">
+          <div class="post-foot-next">
+            
+              <a href="/posts/5699/" target="_self">
+                <i class="iconfont icon-chevronleft"></i>
+                <span>上一页</span>
+              </a>
+            
+          </div>
+          <div class="post-attach">
+            <span class="post-pubtime">
+              <i class="iconfont icon-updatetime" title="更新时间"></i>
+              2022-02-28 20:44:49
+            </span>
+            
+                  <span class="post-categories">
+                    <i class="iconfont icon-bookmark" title="分类"></i>
+                    
+                    <span class="span--category">
+                      <a href="/categories/%E5%AE%9E%E7%94%A8%E6%95%99%E7%A8%8B/" title="实用教程">
+                        <b>#</b> 实用教程
+                      </a>
+                    </span>
+                    
+                  </span>
+              
+                  <span class="post-tags">
+                    <i class="iconfont icon-tags" title="标签"></i>
+                    
+                    <span class="span--tag">
+                      <a href="/tags/ROS/" title="ROS">
+                        <b>#</b> ROS
+                      </a>
+                    </span>
+                    
+                    <span class="span--tag">
+                      <a href="/tags/%E8%87%AA%E5%8A%A8%E9%A9%BE%E9%A9%B6/" title="自动驾驶">
+                        <b>#</b> 自动驾驶
+                      </a>
+                    </span>
+                    
+                  </span>
+              
+          </div>
+          <div class="post-foot-prev">
+            
+          </div>
+        </div>
+      
+    </div>
+    
+  <div id="btn-catalog" class="btn-catalog">
+    <i class="iconfont icon-catalog"></i>
+  </div>
+  <div class="post-catalog hidden" id="catalog">
+    <div class="title">目录</div>
+    <div class="catalog-content">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%97%AE%E9%A2%98%E6%8F%8F%E8%BF%B0"><span class="toc-text">问题描述</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%8E%9F%E5%9B%A0%E8%BF%BD%E6%BA%AF"><span class="toc-text">原因追溯</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-costmap"><span class="toc-text">1.costmap</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-move-base"><span class="toc-text">2.move_base</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%A7%A3%E5%86%B3%E6%8E%AA%E6%96%BD"><span class="toc-text">解决措施</span></a></li></ol>
+    </div>
+  </div>
+
+  
+<script src="/js/catalog.js"></script>
+
+
+
+
+    
+      <div class="comments-container">
+        
+
+
+
+
+  <script src='//unpkg.com/valine/dist/Valine.min.js'></script>
+
+  <div id="vcomments"></div>
+
+  <script>
+    new Valine({
+      el: '#vcomments',
+      appId: 'Aab2KSYlBstMHHart3YQEwKi-gzGzoHsz',
+      appKey: 'd3C1MzENjFjmq7oNTRMeNot1',
+      placeholder: '镂玉裁冰著句，高山流水知音。',
+      avatar: 'retro',
+      lang: 'zh-CN'
+    })
+  </script>
+
+    <style>
+      .comments-container .v .vempty {
+        display: none!important;
+      }
+    </style>
+
+
+
+
+      </div>
+    
+  </div>
+
+
+        <div class="footer">
+  <div class="social">
+    <ul>
+      
+        <li>
+          <a title="github" target="_blank" rel="noopener" href="https://github.com/Mud-B">
+            <i class="iconfont icon-github"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a title="email" target="_blank" rel="noopener" href="https://mail.qq.com/cgi-bin/qm_share?t=qm_mailme&email=SjM7InNzfn57eAo7O2QpJSc">
+            <i class="iconfont icon-envelope"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a title="twitter" target="_blank" rel="noopener" href="https://twitter.com/QIHAOYAO">
+            <i class="iconfont icon-twitter"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a title="rss" href="/atom.xml">
+            <i class="iconfont icon-rss"></i>
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+  
+    <div class="footer-more">
+      
+        <a target="_blank" rel="noopener" href="http://beian.miit.gov.cn/">浙ICP备2020043323号</a>
+        
+    </div>
+  
+    <div class="footer-more">
+      
+        Copyright © MB
+        
+    </div>
+  
+</div>
+
+      </div>
+
+      <div class="tools-bar">
+        <div class="back-to-top tools-bar-item hidden">
+  <a href="javascript: void(0)">
+    <i class="iconfont icon-chevronup"></i>
+  </a>
+</div>
+
+
+<script src="/js/backtotop.js"></script>
+
+
+
+        
+  <div class="search-icon tools-bar-item" id="search-icon">
+    <a href="javascript: void(0)">
+      <i class="iconfont icon-search"></i>
+    </a>
+  </div>
+
+  <div class="search-overlay hidden">
+    <div class="search-content" tabindex="0">
+      <div class="search-title">
+        <span class="search-icon-input">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-search"></i>
+          </a>
+        </span>
+        
+          <input type="text" class="search-input" id="search-input" placeholder="搜索...">
+        
+        <span class="search-close-icon" id="search-close-icon">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-close"></i>
+          </a>
+        </span>
+      </div>
+      <div class="search-result" id="search-result"></div>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+    var inputArea = document.querySelector("#search-input")
+    var searchOverlayArea = document.querySelector(".search-overlay")
+
+    inputArea.onclick = function() {
+      getSearchFile()
+      this.onclick = null
+    }
+
+    inputArea.onkeydown = function() {
+      if(event.keyCode == 13)
+        return false
+    }
+
+    function openOrHideSearchContent() {
+      let isHidden = searchOverlayArea.classList.contains('hidden')
+      if (isHidden) {
+        searchOverlayArea.classList.remove('hidden')
+        document.body.classList.add('hidden')
+        // inputArea.focus()
+      } else {
+        searchOverlayArea.classList.add('hidden')
+        document.body.classList.remove('hidden')
+      }
+    }
+
+    function blurSearchContent(e) {
+      if (e.target === searchOverlayArea) {
+        openOrHideSearchContent()
+      }
+    }
+
+    document.querySelector("#search-icon").addEventListener("click", openOrHideSearchContent, false)
+    document.querySelector("#search-close-icon").addEventListener("click", openOrHideSearchContent, false)
+    searchOverlayArea.addEventListener("click", blurSearchContent, false)
+
+    var searchFunc = function (path, search_id, content_id) {
+      'use strict';
+      var $input = document.getElementById(search_id);
+      var $resultContent = document.getElementById(content_id);
+      $resultContent.innerHTML = "<ul><span class='local-search-empty'>首次搜索，正在载入索引文件，请稍后……<span></ul>";
+      $.ajax({
+        // 0x01. load xml file
+        url: path,
+        dataType: "xml",
+        success: function (xmlResponse) {
+          // 0x02. parse xml file
+          var datas = $("entry", xmlResponse).map(function () {
+            return {
+              title: $("title", this).text(),
+              content: $("content", this).text(),
+              url: $("url", this).text()
+            };
+          }).get();
+          $resultContent.innerHTML = "";
+
+          $input.addEventListener('input', function () {
+            // 0x03. parse query to keywords list
+            var str = '<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length <= 0) {
+              return;
+            }
+            // 0x04. perform local searching
+            datas.forEach(function (data) {
+              var isMatch = true;
+              var content_index = [];
+              if (!data.title || data.title.trim() === '') {
+                data.title = "Untitled";
+              }
+              var orig_data_title = data.title.trim();
+              var data_title = orig_data_title.toLowerCase();
+              var orig_data_content = data.content.trim().replace(/<[^>]+>/g, "");
+              var data_content = orig_data_content.toLowerCase();
+              var data_url = data.url;
+              var index_title = -1;
+              var index_content = -1;
+              var first_occur = -1;
+              // only match artiles with not empty contents
+              if (data_content !== '') {
+                keywords.forEach(function (keyword, i) {
+                  index_title = data_title.indexOf(keyword);
+                  index_content = data_content.indexOf(keyword);
+
+                  if (index_title < 0 && index_content < 0) {
+                    isMatch = false;
+                  } else {
+                    if (index_content < 0) {
+                      index_content = 0;
+                    }
+                    if (i == 0) {
+                      first_occur = index_content;
+                    }
+                    // content_index.push({index_content:index_content, keyword_len:keyword_len});
+                  }
+                });
+              } else {
+                isMatch = false;
+              }
+              // 0x05. show search results
+              if (isMatch) {
+                str += "<li><a href='" + data_url + "' class='search-result-title'>" + orig_data_title + "</a>";
+                var content = orig_data_content;
+                if (first_occur >= 0) {
+                  // cut out 100 characters
+                  var start = first_occur - 20;
+                  var end = first_occur + 80;
+
+                  if (start < 0) {
+                    start = 0;
+                  }
+
+                  if (start == 0) {
+                    end = 100;
+                  }
+
+                  if (end > content.length) {
+                    end = content.length;
+                  }
+
+                  var match_content = content.substr(start, end);
+
+                  // highlight all keywords
+                  keywords.forEach(function (keyword) {
+                    var regS = new RegExp(keyword, "gi");
+                    match_content = match_content.replace(regS, "<span class=\"search-keyword\">" + keyword + "</span>");
+                  });
+
+                  str += "<p class=\"search-result-abstract\">" + match_content + "...</p>"
+                }
+                str += "</li>";
+              }
+            });
+            str += "</ul>";
+            if (str.indexOf('<li>') === -1) {
+              return $resultContent.innerHTML = "<ul><span class='local-search-empty'>没有找到内容，请尝试更换检索词。<span></ul>";
+            }
+            $resultContent.innerHTML = str;
+          });
+        },
+        error: function(xhr, status, error) {
+          $resultContent.innerHTML = ""
+          if (xhr.status === 404) {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>未找到search.xml文件，具体请参考：<a href='https://github.com/zchengsite/hexo-theme-oranges#configuration' target='_black'>configuration</a><span></ul>";
+          } else {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>请求失败，尝试重新刷新页面或稍后重试。<span></ul>";
+          }
+        }
+      });
+      $(document).on('click', '#search-close-icon', function() {
+        $('#search-input').val('');
+        $('#search-result').html('');
+      });
+    }
+
+    var getSearchFile = function() {
+        var path = "/search.xml";
+        searchFunc(path, 'search-input', 'search-result');
+    }
+  </script>
+
+
+
+
+        
+  <div class="tools-bar-item theme-icon" id="switch-color-scheme">
+    <a href="javascript: void(0)">
+      <i id="theme-icon" class="iconfont icon-moon"></i>
+    </a>
+  </div>
+
+  
+<script src="/js/colorscheme.js"></script>
+
+
+
+
+
+        
+  
+    <div class="share-icon tools-bar-item">
+      <a href="javascript: void(0)" id="share-icon">
+        <i class="iconfont iconshare"></i>
+      </a>
+      <div class="share-content hidden">
+        
+          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + %E5%85%B3%E4%BA%8EROS%20Navigation%E5%B0%8F%E8%BD%A6%E5%A4%B1%E6%8E%A7%E7%9A%84%E9%97%AE%E9%A2%98 + '&url=' + http%3A%2F%2Ffindmb.top%2Fposts%2F55934%2F + '" target="_blank" title="Twitter">
+            <i class="iconfont icon-twitter"></i>
+          </a>
+        
+        
+          <a class="share-item" href="https://www.facebook.com/sharer.php?u=http://findmb.top/posts/55934/" target="_blank" title="Facebook">
+            <i class="iconfont icon-facebooksquare"></i>
+          </a>
+        
+      </div>
+    </div>
+  
+  
+<script src="/js/shares.js"></script>
+
+
+
+      </div>
+    </div>
+  <script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/hijiki.model.json"},"display":{"position":"left","width":120,"height":250,"hOffset":30,"vOffset":-60},"mobile":{"show":false},"react":{"opacity":0.7},"log":false});</script><script>
+            window.imageLazyLoadSetting = {
+                isSPA: false,
+                preloadRatio: 1,
+                processImages: null,
+            };
+        </script><script>window.addEventListener("load",function(){var t=/\.(gif|jpg|jpeg|tiff|png)$/i,r=/^data:image\/[a-z]+;base64,/;Array.prototype.slice.call(document.querySelectorAll("img[data-original]")).forEach(function(a){var e=a.parentNode;"A"===e.tagName&&(e.href.match(t)||e.href.match(r))&&(e.href=a.dataset.original)})});</script><script>!function(n){n.imageLazyLoadSetting.processImages=o;var e=n.imageLazyLoadSetting.isSPA,i=n.imageLazyLoadSetting.preloadRatio||1,r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]"));function o(){e&&(r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]")));for(var t,a=0;a<r.length;a++)0<=(t=(t=r[a]).getBoundingClientRect()).bottom&&0<=t.left&&t.top<=(n.innerHeight*i||document.documentElement.clientHeight*i)&&function(){var t,e,n,i,o=r[a];t=o,e=function(){r=r.filter(function(t){return o!==t})},n=new Image,i=t.getAttribute("data-original"),n.onload=function(){t.src=i,e&&e()},t.src!==i&&(n.src=i)}()}o(),n.addEventListener("scroll",function(){var t,e;t=o,e=n,clearTimeout(t.tId),t.tId=setTimeout(function(){t.call(e)},500)})}(this);</script></body>
+</html>
