@@ -4,6 +4,35 @@
   
     
     <entry>
+      <title>一份借助frp实现内网穿透的简要说明</title>
+      <link href="/posts/16409/"/>
+      <url>/posts/16409/</url>
+      
+        <content type="html"><![CDATA[<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><h2 id="frp"><a href="#frp" class="headerlink" title="frp"></a>frp</h2><p>fast reverse proxy(即快速反向代理)，可以把接在NAT上的本地设备的端口映射到公网上，让本地的设备也能像服务器一样被公网访问。</p><h2 id="软件下载"><a href="#软件下载" class="headerlink" title="软件下载"></a>软件下载</h2><p>无论服务端还是客户端，下载地址都是这里。<a href="https://github.com/fatedier/frp/releases">点击直达</a></p><ul><li>服务端： 具有公网ip的服务器</li><li>客户端： 需要被公网访问的本地设备</li></ul><h2 id="软件使用"><a href="#软件使用" class="headerlink" title="软件使用"></a>软件使用</h2><p>下载下来的压缩包解压后，进入文件目录，主要关注以下四个文件：</p><ul><li>frps: 服务端的可执行文件</li><li>frps.ini: 服务端的配置文件</li><li>frpc: 客户端的可执行文件</li><li>frpc.ini: 客户端的配置文件</li></ul><p>进入软件目录后，运行软件命令如下</p><blockquote><p>  .&#x2F;frps -c frps.ini</p></blockquote><p>运行客户端的命令</p><blockquote><p>  .&#x2F;frpc -c frpc.ini</p></blockquote><h2 id="frps-ini"><a href="#frps-ini" class="headerlink" title="frps.ini"></a>frps.ini</h2><p>服务端的配置很简单，bind_port定义监听那个端口，但需<font color="red">注意服务器的防火墙要打开这个端口。</font></p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[common]</span><br><span class="line">bind_port = 7000</span><br></pre></td></tr></table></figure><h2 id="frpc-ini"><a href="#frpc-ini" class="headerlink" title="frpc.ini"></a>frpc.ini</h2><p>客户端的配置如下：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">[common]</span><br><span class="line">server_addr = 122.112.180.229   <span class="comment">#服务器的ip地址</span></span><br><span class="line">server_port = 7000              <span class="comment">#服务器提供frp服务的端口</span></span><br><span class="line"></span><br><span class="line">[RoadNetEdit]           <span class="comment">#这个名字随便取，主要是备注</span></span><br><span class="line"><span class="built_in">type</span> = tcp                  <span class="comment">#端口协议，默认TCP</span></span><br><span class="line">local_ip = 127.0.0.1        <span class="comment">#本地ip地址</span></span><br><span class="line">local_port = 8086           <span class="comment">#本地需要暴露到公网的服务端口</span></span><br><span class="line">remote_port = 30000         <span class="comment">#服务端提供远程访问的端口</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#参数同上</span></span><br><span class="line">[RobotEdit]</span><br><span class="line"><span class="built_in">type</span> = tcp</span><br><span class="line">local_ip = 127.0.0.1</span><br><span class="line">local_port = 8088</span><br><span class="line">remote_port = 30001</span><br></pre></td></tr></table></figure><p>注： 原来通过”local_ip：local_port”访问本地服务，现在可通过”server_addr：remote_port”访问原来的服务。<font color="red">所以记得服务器的防火墙打开remote_port来提供服务！</font></p><h2 id="systemd自启动"><a href="#systemd自启动" class="headerlink" title="systemd自启动"></a>systemd自启动</h2><p>为了让程序自己开机就运行，需要把该程序写入到systemd管理的服务(Unit)中。首先以frpc为例，通过如下命令创建Uint配置文件</p><blockquote><p>vi &#x2F;etc&#x2F;systemd&#x2F;system&#x2F;frpc.service</p></blockquote><p>在vi界面下按i进入insert模式，然后复制以下内容到这个文件中。</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">[Unit]</span><br><span class="line">Description=Frp Service <span class="comment">#简单描述</span></span><br><span class="line">After=network.target    <span class="comment">#在network.target之后启动</span></span><br><span class="line"></span><br><span class="line">[Service]</span><br><span class="line">Type=idle               <span class="comment">#服务类型，idle会等待所有任务处理完成后，才开始执行。</span></span><br><span class="line">User=nobody             <span class="comment">#运行此程序的用户</span></span><br><span class="line">Restart=on-failure      <span class="comment">#失败时重启</span></span><br><span class="line">RestartSec=60s          <span class="comment">#重启间隔60s</span></span><br><span class="line">ExecStart=/home/leador/frp/frpc -c /home/leador/frp/frpc.ini    <span class="comment">#执行的命令</span></span><br><span class="line"></span><br><span class="line">[Install]</span><br><span class="line">WantedBy=multi-user.target  </span><br></pre></td></tr></table></figure><p>然后执行下面的命令重载Systemd</p><blockquote><p>  systemctl daemon-reload</p></blockquote><p>现在通过如下命令就能启动frpc服务了</p><blockquote><p>  systemctl start frpc</p></blockquote><p>输入如下命令使能frpc服务的开机自起</p><blockquote><p>  systemctl enable frpc</p></blockquote><p>可以通过如下命令查看服务的运行状态</p><blockquote><p>  systemctl status frpc</p></blockquote><p>下面是成功运行的截图：<br><img src="https://gitee.com/masterbyqh/frp-doc/raw/master/status.png" alt="status"></p><ul><li>在Loaded标签下我们可以看到enabled说明开机自起设置成功。</li><li>在Active标签下我们可以在到绿色的active(running)说明程序正常运行。</li><li>然后最底下我们可以看到程序的运行日志。</li></ul>]]></content>
+      
+      
+      <categories>
+          
+          <category> 实用教程 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 服务器 </tag>
+            
+            <tag> 环境搭建 </tag>
+            
+            <tag> 网络 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>关于ROS Navigation小车失控的问题</title>
       <link href="/posts/55934/"/>
       <url>/posts/55934/</url>
@@ -72,32 +101,9 @@
       
         <tags>
             
+            <tag> 环境搭建 </tag>
+            
             <tag> opencv </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>无处安放的根号-1</title>
-      <link href="/posts/30320/"/>
-      <url>/posts/30320/</url>
-      
-        <content type="html"><![CDATA[<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><h1 id="来玩个游戏吧"><a href="#来玩个游戏吧" class="headerlink" title="来玩个游戏吧"></a>来玩个游戏吧</h1><p>很简单，请先将-2，-1，1，3，$\sqrt{2}$，$\frac{1}{2}$和0，这几个数按顺序放入到下图中合适的位置</p><p><img src="https://s4.ax1x.com/2022/02/06/HKdiyF.png" alt="a_line"></p><h1 id="一把尺子"><a href="#一把尺子" class="headerlink" title="一把尺子"></a>一把尺子</h1><p>自然数、负数、无理数和分数，这几个数很常见，我想你对他们肯定也了如指掌，所以很快我们就做出了一把可以测量所有东西的尺子。</p><p><img src="https://s4.ax1x.com/2022/02/06/HKDS74.png" alt="ruler"></p><blockquote><p>  一点疑惑：在日常生活中，我们也没怎么见尺子上有分数。其实上图中的$\frac{1}{2}$也是多余的，你知道这是为什么么</p></blockquote><h1 id="神秘的-sqrt-1"><a href="#神秘的-sqrt-1" class="headerlink" title="神秘的$\sqrt{-1}$"></a>神秘的$\sqrt{-1}$</h1><hr><p></br></br><br>对上面这些数我就不做过多介绍了，现在请将本次游戏主角$\sqrt{-1}$也放到上图中合适的位置吧。</p><center>（如果你能放对位置，带上你的思路来找我领奖励吧）</center></br></br></br><hr><blockquote><p>  提示：如果你试图把它放到那条我们画出来的尺子上的话，那就别白费力气了，他跟那些数字根本不是一路人。</p></blockquote><h1 id="sqrt-1-的特性"><a href="#sqrt-1-的特性" class="headerlink" title="$\sqrt{-1}$的特性"></a>$\sqrt{-1}$的特性</h1><p>看样子想把它放上去并不容易，那我们还是从仅有的线索-1出发吧。<br>-1又是怎么来的呢？对1取反出来的。还能是两个$\sqrt{-1}$相乘出来的对吧？<br>那如果我们继续乘$\sqrt{-1}$会怎么样呢？</p><ul><li>$\sqrt{-1}$ x $\sqrt{-1}$ &#x3D; -1</li><li>-1 x $\sqrt{-1}$ &#x3D; -$\sqrt{-1}$</li><li>-$\sqrt{-1}$ x $\sqrt{-1}$ &#x3D; 1</li><li>1 x $\sqrt{-1}$ &#x3D; $\sqrt{-1}$</li></ul><p>会旋转，你会反复地得到上面这四个数-1，-$\sqrt{-1}$，1，$\sqrt{-1}$，就像下图一样。</p><p><img src="https://s4.ax1x.com/2022/02/07/HMsgGd.png" alt="sqrt-1"></p><h1 id="答案"><a href="#答案" class="headerlink" title="答案"></a>答案</h1><p>讲到这，答案已经明了。不过我还是想说一句，$\sqrt{-1}$的意义不只是让尺子旋转了起来，更重要的是他让数字插上了翅膀，逃离了一维世界。</p>]]></content>
-      
-      
-      <categories>
-          
-          <category> 当然我在乱讲三七 </category>
-          
-      </categories>
-      
-      
-        <tags>
-            
-            <tag> 数学 </tag>
             
         </tags>
       

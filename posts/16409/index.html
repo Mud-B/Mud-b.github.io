@@ -11,7 +11,7 @@
   
   <title>
     
-      无处安放的根号-1 
+      一份借助frp实现内网穿透的简要说明 
       
       
       |
@@ -148,19 +148,19 @@ MathJax = {
   <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
   <div class="container post-details" id="post-details">
     <div class="post-content">
-      <div class="post-title">无处安放的根号-1</div>
+      <div class="post-title">一份借助frp实现内网穿透的简要说明</div>
       <div class="post-attach">
         <span class="post-pubtime">
           <i class="iconfont icon-updatetime" title="更新时间"></i>
-          2022-02-06 20:17:35
+          2022-04-21 21:03:43
         </span>
         
               <span class="post-categories">
                 <i class="iconfont icon-bookmark" title="分类"></i>
                 
                 <span class="span--category">
-                  <a href="/categories/%E5%BD%93%E7%84%B6%E6%88%91%E5%9C%A8%E4%B9%B1%E8%AE%B2%E4%B8%89%E4%B8%83/" title="当然我在乱讲三七">
-                    <b>#</b> 当然我在乱讲三七
+                  <a href="/categories/%E5%AE%9E%E7%94%A8%E6%95%99%E7%A8%8B/" title="实用教程">
+                    <b>#</b> 实用教程
                   </a>
                 </span>
                 
@@ -170,51 +170,92 @@ MathJax = {
                 <i class="iconfont icon-tags" title="标签"></i>
                 
                 <span class="span--tag">
-                  <a href="/tags/%E6%95%B0%E5%AD%A6/" title="数学">
-                    <b>#</b> 数学
+                  <a href="/tags/%E6%9C%8D%E5%8A%A1%E5%99%A8/" title="服务器">
+                    <b>#</b> 服务器
+                  </a>
+                </span>
+                
+                <span class="span--tag">
+                  <a href="/tags/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/" title="环境搭建">
+                    <b>#</b> 环境搭建
+                  </a>
+                </span>
+                
+                <span class="span--tag">
+                  <a href="/tags/%E7%BD%91%E7%BB%9C/" title="网络">
+                    <b>#</b> 网络
                   </a>
                 </span>
                 
               </span>
           
         </br>
-        <span class="post-count">字数：445</span>
-        <span class="post-count">阅读时长：1min</span>
+        <span class="post-count">字数：724</span>
+        <span class="post-count">阅读时长：2min</span>
       </div>
       <div class="markdown-body">
-        <h1 id="来玩个游戏吧"><a href="#来玩个游戏吧" class="headerlink" title="来玩个游戏吧"></a>来玩个游戏吧</h1><p>很简单，请先将-2，-1，1，3，$\sqrt{2}$，$\frac{1}{2}$和0，这几个数按顺序放入到下图中合适的位置</p>
-<p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAAEsCAMAAABOo35HAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAAC9UExURVlZWdPT07KysmRkZIWFhfT09JmZmWZmZm9vb39/fxkZGUxMTDMzM3p6epCQkKamppubm729venp6cjIyN7e3tbW1s/Pz8LCwnx8fLS0tFZWVoiIiI+Pj6GhoeTk5Glpabu7u93d3evr66CgoJSUlKqqqsnJyeDg4Hd3d8PDw+Xl5bi4uNHR0dvb26Ojo6urq+fn51hYWDg4OCgoKHBwcK2traenp0FBQe7u7vHx8U5OTre3t8zMzHV1df///7GrnpQAAAA/dFJOU///////////////////////////////////////////////////////////////////////////////////AI4mfBcAAAUGSURBVHja7NoJb6M4GMZxY0NCD64kve/pMZ2d3Z297+X7f6zFNmBAMUXa6URl/q9UJSWPUPzrizFWRUlNLgEBWGCBBRZYYEEAFlhggQUWWBCABRZYYIEFFgRggQUWWGCBBQFYYIEFFlhgQQAWWGCBBRZYEIAFFlhggQUWBGCBBRZYYIEFAVhggQUWWGBBABZYYIEFFlgQgAUWWGCBBRYEYIEFFlhggQUBWGCBBRZYYEEAFlhggQUWWBCABRZYYIEFFgRggQUWWGCBBQFYYIEFFlhgQQAWWGCBBRZYEIAFFlhggQUWBGCBBRZYn6cCIcRXgvX/h9qcIVBqDdbEM8RCxGCB9QqXYRwHYDHBgwXWl8eKZKiESHI3Ba1kWs3fKixcaJUl1YyeBm7Ocq+yLItUiVBGnXxenSHJolIKEcwHq6ikbOX1YGVzQCTN8LPmSLreghUl9sN4Uw7yajMrLC0TZ1ImzqY6FEop0+pIaEN5HaoOxVuwEqFyc4I46uSlzOLqgxlh6UaR9l3VYWl9Fdoxb1Q90KJtu41pwwFW/WHhTtW8i7TafLCqRsk6bsGw63L9qurXRmuIlbT9lDQnlXU+nBFW1Q2qnZbDprWa2tjR90LZFqx1/+Td/HpGWLlrLDvIwTcx6dQ1Vrntbig68cDms3JwbA5Y1azs1ger6sNV/bbIw1jU81MvNAGrl58RVn8ozW+btF08iGFoAlYvP3csfVur1gJBEIA1uBmue5dhZDOyO2epbmgCVi8/I6x0MMHH9pjsTfBhNzQBq5uPZoQlB0uH3DZG4EZqQ26fL3sZq5uf09Ih6qw3i/pm6BZO0qZX7rrUS68Xsbr5ZE4rePMk08pk9aUZugfqppvs6AM1Acvlo/StP+6EbW06z8hJqxbYp2BZPQUnFsLsKuhQdaHqn5ewbF7KXIn0jWO5MqOQ7RaNLPtbNMmmhimj0GUmYLl8Gs0Lq4wyPbTu1l2QKqHSouzs3OlDIslW5SQsnY/NXmFplyNvEuuLV/Tau9BzwiraDUSwXmysztYWWNtL1psXeumgIrDGaqXvBfUuvtqUYI3V2t1wk1e2msFluJJm6zDJXv/fIfjPP7DAAgsssCiwwAILLLDAosACCyywwAKLAgsssMACC6zt9fDz/v75tyOB+98PD2+ORgKffjw4OP1uJPDxl+Xy8v1I4MPF3t7VNyOB4/vF4uzdzrG+39f1kz/w66Guv/yBvw90KX/gZKkr8Qf+2dOV+gNHC12/7RxrabD2/a31bLAO/a11YbAO/K21MFhLf2s9Gqw9f2vdGqzFu11jnVusE2/gxmI9eQOnFuvYG7i0WH7uK4t15w2cWazrXWP9a7H8f/bQYvm/6IPF+sF/pVssf19Ii/WH/0K2WH/uGuvEWC39gSdj9Twy+Rqri5EZx1gt/IE7Y/XoD1wbq9vd3w1PlufnD2OBp+ebm/uxwPHF6emnscDR4vLy41jg7vHq6sNY4Pr27OyYdRaLUrDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssL6u+k+AAQCR9eHtLKvLfwAAAABJRU5ErkJggg==" data-original="https://s4.ax1x.com/2022/02/06/HKdiyF.png" alt="a_line"></p>
-<h1 id="一把尺子"><a href="#一把尺子" class="headerlink" title="一把尺子"></a>一把尺子</h1><p>自然数、负数、无理数和分数，这几个数很常见，我想你对他们肯定也了如指掌，所以很快我们就做出了一把可以测量所有东西的尺子。</p>
-<p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAAEsCAMAAABOo35HAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAAC9UExURVlZWdPT07KysmRkZIWFhfT09JmZmWZmZm9vb39/fxkZGUxMTDMzM3p6epCQkKamppubm729venp6cjIyN7e3tbW1s/Pz8LCwnx8fLS0tFZWVoiIiI+Pj6GhoeTk5Glpabu7u93d3evr66CgoJSUlKqqqsnJyeDg4Hd3d8PDw+Xl5bi4uNHR0dvb26Ojo6urq+fn51hYWDg4OCgoKHBwcK2traenp0FBQe7u7vHx8U5OTre3t8zMzHV1df///7GrnpQAAAA/dFJOU///////////////////////////////////////////////////////////////////////////////////AI4mfBcAAAUGSURBVHja7NoJb6M4GMZxY0NCD64kve/pMZ2d3Z297+X7f6zFNmBAMUXa6URl/q9UJSWPUPzrizFWRUlNLgEBWGCBBRZYYEEAFlhggQUWWBCABRZYYIEFFgRggQUWWGCBBQFYYIEFFlhgQQAWWGCBBRZYEIAFFlhggQUWBGCBBRZYYIEFAVhggQUWWGBBABZYYIEFFlgQgAUWWGCBBRYEYIEFFlhggQUBWGCBBRZYYEEAFlhggQUWWBCABRZYYIEFFgRggQUWWGCBBQFYYIEFFlhgQQAWWGCBBRZYEIAFFlhggQUWBGCBBRZYn6cCIcRXgvX/h9qcIVBqDdbEM8RCxGCB9QqXYRwHYDHBgwXWl8eKZKiESHI3Ba1kWs3fKixcaJUl1YyeBm7Ocq+yLItUiVBGnXxenSHJolIKEcwHq6ikbOX1YGVzQCTN8LPmSLreghUl9sN4Uw7yajMrLC0TZ1ImzqY6FEop0+pIaEN5HaoOxVuwEqFyc4I46uSlzOLqgxlh6UaR9l3VYWl9Fdoxb1Q90KJtu41pwwFW/WHhTtW8i7TafLCqRsk6bsGw63L9qurXRmuIlbT9lDQnlXU+nBFW1Q2qnZbDprWa2tjR90LZFqx1/+Td/HpGWLlrLDvIwTcx6dQ1Vrntbig68cDms3JwbA5Y1azs1ger6sNV/bbIw1jU81MvNAGrl58RVn8ozW+btF08iGFoAlYvP3csfVur1gJBEIA1uBmue5dhZDOyO2epbmgCVi8/I6x0MMHH9pjsTfBhNzQBq5uPZoQlB0uH3DZG4EZqQ26fL3sZq5uf09Ih6qw3i/pm6BZO0qZX7rrUS68Xsbr5ZE4rePMk08pk9aUZugfqppvs6AM1Acvlo/StP+6EbW06z8hJqxbYp2BZPQUnFsLsKuhQdaHqn5ewbF7KXIn0jWO5MqOQ7RaNLPtbNMmmhimj0GUmYLl8Gs0Lq4wyPbTu1l2QKqHSouzs3OlDIslW5SQsnY/NXmFplyNvEuuLV/Tau9BzwiraDUSwXmysztYWWNtL1psXeumgIrDGaqXvBfUuvtqUYI3V2t1wk1e2msFluJJm6zDJXv/fIfjPP7DAAgsssCiwwAILLLDAosACCyywwAKLAgsssMACC6zt9fDz/v75tyOB+98PD2+ORgKffjw4OP1uJPDxl+Xy8v1I4MPF3t7VNyOB4/vF4uzdzrG+39f1kz/w66Guv/yBvw90KX/gZKkr8Qf+2dOV+gNHC12/7RxrabD2/a31bLAO/a11YbAO/K21MFhLf2s9Gqw9f2vdGqzFu11jnVusE2/gxmI9eQOnFuvYG7i0WH7uK4t15w2cWazrXWP9a7H8f/bQYvm/6IPF+sF/pVssf19Ii/WH/0K2WH/uGuvEWC39gSdj9Twy+Rqri5EZx1gt/IE7Y/XoD1wbq9vd3w1PlufnD2OBp+ebm/uxwPHF6emnscDR4vLy41jg7vHq6sNY4Pr27OyYdRaLUrDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssL6u+k+AAQCR9eHtLKvLfwAAAABJRU5ErkJggg==" data-original="https://s4.ax1x.com/2022/02/06/HKDS74.png" alt="ruler"></p>
-<blockquote>
-<p>  一点疑惑：在日常生活中，我们也没怎么见尺子上有分数。其实上图中的$\frac{1}{2}$也是多余的，你知道这是为什么么</p>
-</blockquote>
-<h1 id="神秘的-sqrt-1"><a href="#神秘的-sqrt-1" class="headerlink" title="神秘的$\sqrt{-1}$"></a>神秘的$\sqrt{-1}$</h1><hr>
-<p></br></br><br>对上面这些数我就不做过多介绍了，现在请将本次游戏主角$\sqrt{-1}$也放到上图中合适的位置吧。</p>
-<center>（如果你能放对位置，带上你的思路来找我领奖励吧）</center>
-</br></br></br>
-
-<hr>
-<blockquote>
-<p>  提示：如果你试图把它放到那条我们画出来的尺子上的话，那就别白费力气了，他跟那些数字根本不是一路人。</p>
-</blockquote>
-<h1 id="sqrt-1-的特性"><a href="#sqrt-1-的特性" class="headerlink" title="$\sqrt{-1}$的特性"></a>$\sqrt{-1}$的特性</h1><p>看样子想把它放上去并不容易，那我们还是从仅有的线索-1出发吧。<br>-1又是怎么来的呢？对1取反出来的。还能是两个$\sqrt{-1}$相乘出来的对吧？<br>那如果我们继续乘$\sqrt{-1}$会怎么样呢？</p>
+        <h2 id="frp"><a href="#frp" class="headerlink" title="frp"></a>frp</h2><p>fast reverse proxy(即快速反向代理)，可以把接在NAT上的本地设备的端口映射到公网上，让本地的设备也能像服务器一样被公网访问。</p>
+<h2 id="软件下载"><a href="#软件下载" class="headerlink" title="软件下载"></a>软件下载</h2><p>无论服务端还是客户端，下载地址都是这里。<a target="_blank" rel="noopener" href="https://github.com/fatedier/frp/releases">点击直达</a></p>
 <ul>
-<li>$\sqrt{-1}$ x $\sqrt{-1}$ &#x3D; -1</li>
-<li>-1 x $\sqrt{-1}$ &#x3D; -$\sqrt{-1}$</li>
-<li>-$\sqrt{-1}$ x $\sqrt{-1}$ &#x3D; 1</li>
-<li>1 x $\sqrt{-1}$ &#x3D; $\sqrt{-1}$</li>
+<li>服务端： 具有公网ip的服务器</li>
+<li>客户端： 需要被公网访问的本地设备</li>
 </ul>
-<p>会旋转，你会反复地得到上面这四个数-1，-$\sqrt{-1}$，1，$\sqrt{-1}$，就像下图一样。</p>
-<p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAAEsCAMAAABOo35HAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAAC9UExURVlZWdPT07KysmRkZIWFhfT09JmZmWZmZm9vb39/fxkZGUxMTDMzM3p6epCQkKamppubm729venp6cjIyN7e3tbW1s/Pz8LCwnx8fLS0tFZWVoiIiI+Pj6GhoeTk5Glpabu7u93d3evr66CgoJSUlKqqqsnJyeDg4Hd3d8PDw+Xl5bi4uNHR0dvb26Ojo6urq+fn51hYWDg4OCgoKHBwcK2traenp0FBQe7u7vHx8U5OTre3t8zMzHV1df///7GrnpQAAAA/dFJOU///////////////////////////////////////////////////////////////////////////////////AI4mfBcAAAUGSURBVHja7NoJb6M4GMZxY0NCD64kve/pMZ2d3Z297+X7f6zFNmBAMUXa6URl/q9UJSWPUPzrizFWRUlNLgEBWGCBBRZYYEEAFlhggQUWWBCABRZYYIEFFgRggQUWWGCBBQFYYIEFFlhgQQAWWGCBBRZYEIAFFlhggQUWBGCBBRZYYIEFAVhggQUWWGBBABZYYIEFFlgQgAUWWGCBBRYEYIEFFlhggQUBWGCBBRZYYEEAFlhggQUWWBCABRZYYIEFFgRggQUWWGCBBQFYYIEFFlhgQQAWWGCBBRZYEIAFFlhggQUWBGCBBRZYn6cCIcRXgvX/h9qcIVBqDdbEM8RCxGCB9QqXYRwHYDHBgwXWl8eKZKiESHI3Ba1kWs3fKixcaJUl1YyeBm7Ocq+yLItUiVBGnXxenSHJolIKEcwHq6ikbOX1YGVzQCTN8LPmSLreghUl9sN4Uw7yajMrLC0TZ1ImzqY6FEop0+pIaEN5HaoOxVuwEqFyc4I46uSlzOLqgxlh6UaR9l3VYWl9Fdoxb1Q90KJtu41pwwFW/WHhTtW8i7TafLCqRsk6bsGw63L9qurXRmuIlbT9lDQnlXU+nBFW1Q2qnZbDprWa2tjR90LZFqx1/+Td/HpGWLlrLDvIwTcx6dQ1Vrntbig68cDms3JwbA5Y1azs1ger6sNV/bbIw1jU81MvNAGrl58RVn8ozW+btF08iGFoAlYvP3csfVur1gJBEIA1uBmue5dhZDOyO2epbmgCVi8/I6x0MMHH9pjsTfBhNzQBq5uPZoQlB0uH3DZG4EZqQ26fL3sZq5uf09Ih6qw3i/pm6BZO0qZX7rrUS68Xsbr5ZE4rePMk08pk9aUZugfqppvs6AM1Acvlo/StP+6EbW06z8hJqxbYp2BZPQUnFsLsKuhQdaHqn5ewbF7KXIn0jWO5MqOQ7RaNLPtbNMmmhimj0GUmYLl8Gs0Lq4wyPbTu1l2QKqHSouzs3OlDIslW5SQsnY/NXmFplyNvEuuLV/Tau9BzwiraDUSwXmysztYWWNtL1psXeumgIrDGaqXvBfUuvtqUYI3V2t1wk1e2msFluJJm6zDJXv/fIfjPP7DAAgsssCiwwAILLLDAosACCyywwAKLAgsssMACC6zt9fDz/v75tyOB+98PD2+ORgKffjw4OP1uJPDxl+Xy8v1I4MPF3t7VNyOB4/vF4uzdzrG+39f1kz/w66Guv/yBvw90KX/gZKkr8Qf+2dOV+gNHC12/7RxrabD2/a31bLAO/a11YbAO/K21MFhLf2s9Gqw9f2vdGqzFu11jnVusE2/gxmI9eQOnFuvYG7i0WH7uK4t15w2cWazrXWP9a7H8f/bQYvm/6IPF+sF/pVssf19Ii/WH/0K2WH/uGuvEWC39gSdj9Twy+Rqri5EZx1gt/IE7Y/XoD1wbq9vd3w1PlufnD2OBp+ebm/uxwPHF6emnscDR4vLy41jg7vHq6sNY4Pr27OyYdRaLUrDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssL6u+k+AAQCR9eHtLKvLfwAAAABJRU5ErkJggg==" data-original="https://s4.ax1x.com/2022/02/07/HMsgGd.png" alt="sqrt-1"></p>
-<h1 id="答案"><a href="#答案" class="headerlink" title="答案"></a>答案</h1><p>讲到这，答案已经明了。不过我还是想说一句，$\sqrt{-1}$的意义不只是让尺子旋转了起来，更重要的是他让数字插上了翅膀，逃离了一维世界。</p>
+<h2 id="软件使用"><a href="#软件使用" class="headerlink" title="软件使用"></a>软件使用</h2><p>下载下来的压缩包解压后，进入文件目录，主要关注以下四个文件：</p>
+<ul>
+<li>frps: 服务端的可执行文件</li>
+<li>frps.ini: 服务端的配置文件</li>
+<li>frpc: 客户端的可执行文件</li>
+<li>frpc.ini: 客户端的配置文件</li>
+</ul>
+<p>进入软件目录后，运行软件命令如下</p>
+<blockquote>
+<p>  .&#x2F;frps -c frps.ini</p>
+</blockquote>
+<p>运行客户端的命令</p>
+<blockquote>
+<p>  .&#x2F;frpc -c frpc.ini</p>
+</blockquote>
+<h2 id="frps-ini"><a href="#frps-ini" class="headerlink" title="frps.ini"></a>frps.ini</h2><p>服务端的配置很简单，bind_port定义监听那个端口，但需<font color="red">注意服务器的防火墙要打开这个端口。</font></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[common]</span><br><span class="line">bind_port = 7000</span><br></pre></td></tr></table></figure>
+
+<h2 id="frpc-ini"><a href="#frpc-ini" class="headerlink" title="frpc.ini"></a>frpc.ini</h2><p>客户端的配置如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">[common]</span><br><span class="line">server_addr = 122.112.180.229   <span class="comment">#服务器的ip地址</span></span><br><span class="line">server_port = 7000              <span class="comment">#服务器提供frp服务的端口</span></span><br><span class="line"></span><br><span class="line">[RoadNetEdit]           <span class="comment">#这个名字随便取，主要是备注</span></span><br><span class="line"><span class="built_in">type</span> = tcp                  <span class="comment">#端口协议，默认TCP</span></span><br><span class="line">local_ip = 127.0.0.1        <span class="comment">#本地ip地址</span></span><br><span class="line">local_port = 8086           <span class="comment">#本地需要暴露到公网的服务端口</span></span><br><span class="line">remote_port = 30000         <span class="comment">#服务端提供远程访问的端口</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#参数同上</span></span><br><span class="line">[RobotEdit]</span><br><span class="line"><span class="built_in">type</span> = tcp</span><br><span class="line">local_ip = 127.0.0.1</span><br><span class="line">local_port = 8088</span><br><span class="line">remote_port = 30001</span><br></pre></td></tr></table></figure>
+<p>注： 原来通过”local_ip：local_port”访问本地服务，现在可通过”server_addr：remote_port”访问原来的服务。<font color="red">所以记得服务器的防火墙打开remote_port来提供服务！</font></p>
+<h2 id="systemd自启动"><a href="#systemd自启动" class="headerlink" title="systemd自启动"></a>systemd自启动</h2><p>为了让程序自己开机就运行，需要把该程序写入到systemd管理的服务(Unit)中。首先以frpc为例，通过如下命令创建Uint配置文件</p>
+<blockquote>
+<p>vi &#x2F;etc&#x2F;systemd&#x2F;system&#x2F;frpc.service</p>
+</blockquote>
+<p>在vi界面下按i进入insert模式，然后复制以下内容到这个文件中。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">[Unit]</span><br><span class="line">Description=Frp Service <span class="comment">#简单描述</span></span><br><span class="line">After=network.target    <span class="comment">#在network.target之后启动</span></span><br><span class="line"></span><br><span class="line">[Service]</span><br><span class="line">Type=idle               <span class="comment">#服务类型，idle会等待所有任务处理完成后，才开始执行。</span></span><br><span class="line">User=nobody             <span class="comment">#运行此程序的用户</span></span><br><span class="line">Restart=on-failure      <span class="comment">#失败时重启</span></span><br><span class="line">RestartSec=60s          <span class="comment">#重启间隔60s</span></span><br><span class="line">ExecStart=/home/leador/frp/frpc -c /home/leador/frp/frpc.ini    <span class="comment">#执行的命令</span></span><br><span class="line"></span><br><span class="line">[Install]</span><br><span class="line">WantedBy=multi-user.target  </span><br></pre></td></tr></table></figure>
+<p>然后执行下面的命令重载Systemd</p>
+<blockquote>
+<p>  systemctl daemon-reload</p>
+</blockquote>
+<p>现在通过如下命令就能启动frpc服务了</p>
+<blockquote>
+<p>  systemctl start frpc</p>
+</blockquote>
+<p>输入如下命令使能frpc服务的开机自起</p>
+<blockquote>
+<p>  systemctl enable frpc</p>
+</blockquote>
+<p>可以通过如下命令查看服务的运行状态</p>
+<blockquote>
+<p>  systemctl status frpc</p>
+</blockquote>
+<p>下面是成功运行的截图：<br><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAAEsCAMAAABOo35HAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAAC9UExURVlZWdPT07KysmRkZIWFhfT09JmZmWZmZm9vb39/fxkZGUxMTDMzM3p6epCQkKamppubm729venp6cjIyN7e3tbW1s/Pz8LCwnx8fLS0tFZWVoiIiI+Pj6GhoeTk5Glpabu7u93d3evr66CgoJSUlKqqqsnJyeDg4Hd3d8PDw+Xl5bi4uNHR0dvb26Ojo6urq+fn51hYWDg4OCgoKHBwcK2traenp0FBQe7u7vHx8U5OTre3t8zMzHV1df///7GrnpQAAAA/dFJOU///////////////////////////////////////////////////////////////////////////////////AI4mfBcAAAUGSURBVHja7NoJb6M4GMZxY0NCD64kve/pMZ2d3Z297+X7f6zFNmBAMUXa6URl/q9UJSWPUPzrizFWRUlNLgEBWGCBBRZYYEEAFlhggQUWWBCABRZYYIEFFgRggQUWWGCBBQFYYIEFFlhgQQAWWGCBBRZYEIAFFlhggQUWBGCBBRZYYIEFAVhggQUWWGBBABZYYIEFFlgQgAUWWGCBBRYEYIEFFlhggQUBWGCBBRZYYEEAFlhggQUWWBCABRZYYIEFFgRggQUWWGCBBQFYYIEFFlhgQQAWWGCBBRZYEIAFFlhggQUWBGCBBRZYn6cCIcRXgvX/h9qcIVBqDdbEM8RCxGCB9QqXYRwHYDHBgwXWl8eKZKiESHI3Ba1kWs3fKixcaJUl1YyeBm7Ocq+yLItUiVBGnXxenSHJolIKEcwHq6ikbOX1YGVzQCTN8LPmSLreghUl9sN4Uw7yajMrLC0TZ1ImzqY6FEop0+pIaEN5HaoOxVuwEqFyc4I46uSlzOLqgxlh6UaR9l3VYWl9Fdoxb1Q90KJtu41pwwFW/WHhTtW8i7TafLCqRsk6bsGw63L9qurXRmuIlbT9lDQnlXU+nBFW1Q2qnZbDprWa2tjR90LZFqx1/+Td/HpGWLlrLDvIwTcx6dQ1Vrntbig68cDms3JwbA5Y1azs1ger6sNV/bbIw1jU81MvNAGrl58RVn8ozW+btF08iGFoAlYvP3csfVur1gJBEIA1uBmue5dhZDOyO2epbmgCVi8/I6x0MMHH9pjsTfBhNzQBq5uPZoQlB0uH3DZG4EZqQ26fL3sZq5uf09Ih6qw3i/pm6BZO0qZX7rrUS68Xsbr5ZE4rePMk08pk9aUZugfqppvs6AM1Acvlo/StP+6EbW06z8hJqxbYp2BZPQUnFsLsKuhQdaHqn5ewbF7KXIn0jWO5MqOQ7RaNLPtbNMmmhimj0GUmYLl8Gs0Lq4wyPbTu1l2QKqHSouzs3OlDIslW5SQsnY/NXmFplyNvEuuLV/Tau9BzwiraDUSwXmysztYWWNtL1psXeumgIrDGaqXvBfUuvtqUYI3V2t1wk1e2msFluJJm6zDJXv/fIfjPP7DAAgsssCiwwAILLLDAosACCyywwAKLAgsssMACC6zt9fDz/v75tyOB+98PD2+ORgKffjw4OP1uJPDxl+Xy8v1I4MPF3t7VNyOB4/vF4uzdzrG+39f1kz/w66Guv/yBvw90KX/gZKkr8Qf+2dOV+gNHC12/7RxrabD2/a31bLAO/a11YbAO/K21MFhLf2s9Gqw9f2vdGqzFu11jnVusE2/gxmI9eQOnFuvYG7i0WH7uK4t15w2cWazrXWP9a7H8f/bQYvm/6IPF+sF/pVssf19Ii/WH/0K2WH/uGuvEWC39gSdj9Twy+Rqri5EZx1gt/IE7Y/XoD1wbq9vd3w1PlufnD2OBp+ebm/uxwPHF6emnscDR4vLy41jg7vHq6sNY4Pr27OyYdRaLUrDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssL6u+k+AAQCR9eHtLKvLfwAAAABJRU5ErkJggg==" data-original="https://gitee.com/masterbyqh/frp-doc/raw/master/status.png" alt="status"></p>
+<ul>
+<li>在Loaded标签下我们可以看到enabled说明开机自起设置成功。</li>
+<li>在Active标签下我们可以在到绿色的active(running)说明程序正常运行。</li>
+<li>然后最底下我们可以看到程序的运行日志。</li>
+</ul>
 
       </div>
       
         <div class="prev-or-next">
           <div class="post-foot-next">
             
-              <a href="/posts/53430/" target="_self">
+              <a href="/posts/55934/" target="_self">
                 <i class="iconfont icon-chevronleft"></i>
                 <span>上一页</span>
               </a>
@@ -223,15 +264,15 @@ MathJax = {
           <div class="post-attach">
             <span class="post-pubtime">
               <i class="iconfont icon-updatetime" title="更新时间"></i>
-              2022-02-06 20:17:35
+              2022-04-21 21:03:43
             </span>
             
                   <span class="post-categories">
                     <i class="iconfont icon-bookmark" title="分类"></i>
                     
                     <span class="span--category">
-                      <a href="/categories/%E5%BD%93%E7%84%B6%E6%88%91%E5%9C%A8%E4%B9%B1%E8%AE%B2%E4%B8%89%E4%B8%83/" title="当然我在乱讲三七">
-                        <b>#</b> 当然我在乱讲三七
+                      <a href="/categories/%E5%AE%9E%E7%94%A8%E6%95%99%E7%A8%8B/" title="实用教程">
+                        <b>#</b> 实用教程
                       </a>
                     </span>
                     
@@ -241,8 +282,20 @@ MathJax = {
                     <i class="iconfont icon-tags" title="标签"></i>
                     
                     <span class="span--tag">
-                      <a href="/tags/%E6%95%B0%E5%AD%A6/" title="数学">
-                        <b>#</b> 数学
+                      <a href="/tags/%E6%9C%8D%E5%8A%A1%E5%99%A8/" title="服务器">
+                        <b>#</b> 服务器
+                      </a>
+                    </span>
+                    
+                    <span class="span--tag">
+                      <a href="/tags/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/" title="环境搭建">
+                        <b>#</b> 环境搭建
+                      </a>
+                    </span>
+                    
+                    <span class="span--tag">
+                      <a href="/tags/%E7%BD%91%E7%BB%9C/" title="网络">
+                        <b>#</b> 网络
                       </a>
                     </span>
                     
@@ -250,11 +303,6 @@ MathJax = {
               
           </div>
           <div class="post-foot-prev">
-            
-              <a href="/posts/5699/" target="_self">
-                <span>下一页</span>
-                <i class="iconfont icon-chevronright"></i>
-              </a>
             
           </div>
         </div>
@@ -267,7 +315,7 @@ MathJax = {
   <div class="post-catalog hidden" id="catalog">
     <div class="title">目录</div>
     <div class="catalog-content">
-      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%9D%A5%E7%8E%A9%E4%B8%AA%E6%B8%B8%E6%88%8F%E5%90%A7"><span class="toc-text">来玩个游戏吧</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%80%E6%8A%8A%E5%B0%BA%E5%AD%90"><span class="toc-text">一把尺子</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%A5%9E%E7%A7%98%E7%9A%84-sqrt-1"><span class="toc-text">神秘的$\sqrt{-1}$</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#sqrt-1-%E7%9A%84%E7%89%B9%E6%80%A7"><span class="toc-text">$\sqrt{-1}$的特性</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%AD%94%E6%A1%88"><span class="toc-text">答案</span></a></li></ol>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#frp"><span class="toc-text">frp</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BD%AF%E4%BB%B6%E4%B8%8B%E8%BD%BD"><span class="toc-text">软件下载</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BD%AF%E4%BB%B6%E4%BD%BF%E7%94%A8"><span class="toc-text">软件使用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#frps-ini"><span class="toc-text">frps.ini</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#frpc-ini"><span class="toc-text">frpc.ini</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#systemd%E8%87%AA%E5%90%AF%E5%8A%A8"><span class="toc-text">systemd自启动</span></a></li></ol>
     </div>
   </div>
 
@@ -581,12 +629,12 @@ MathJax = {
       </a>
       <div class="share-content hidden">
         
-          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + %E6%97%A0%E5%A4%84%E5%AE%89%E6%94%BE%E7%9A%84%E6%A0%B9%E5%8F%B7-1 + '&url=' + http%3A%2F%2Ffindmb.top%2Fposts%2F30320%2F + '" target="_blank" title="Twitter">
+          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + %E4%B8%80%E4%BB%BD%E5%80%9F%E5%8A%A9frp%E5%AE%9E%E7%8E%B0%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F%E7%9A%84%E7%AE%80%E8%A6%81%E8%AF%B4%E6%98%8E + '&url=' + http%3A%2F%2Ffindmb.top%2Fposts%2F16409%2F + '" target="_blank" title="Twitter">
             <i class="iconfont icon-twitter"></i>
           </a>
         
         
-          <a class="share-item" href="https://www.facebook.com/sharer.php?u=http://findmb.top/posts/30320/" target="_blank" title="Facebook">
+          <a class="share-item" href="https://www.facebook.com/sharer.php?u=http://findmb.top/posts/16409/" target="_blank" title="Facebook">
             <i class="iconfont icon-facebooksquare"></i>
           </a>
         

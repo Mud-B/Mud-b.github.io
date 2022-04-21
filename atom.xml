@@ -6,7 +6,7 @@
   <link href="http://findmb.top/atom.xml" rel="self"/>
   
   <link href="http://findmb.top/"/>
-  <updated>2022-03-08T11:40:02.555Z</updated>
+  <updated>2022-04-21T14:42:35.514Z</updated>
   <id>http://findmb.top/</id>
   
   <author>
@@ -15,6 +15,35 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>一份借助frp实现内网穿透的简要说明</title>
+    <link href="http://findmb.top/posts/16409/"/>
+    <id>http://findmb.top/posts/16409/</id>
+    <published>2022-04-21T13:03:43.000Z</published>
+    <updated>2022-04-21T14:42:35.514Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css&quot;&gt;&lt;h2 id=&quot;frp&quot;&gt;&lt;a href=&quot;#frp&quot;</summary>
+        
+      
+    
+    
+    
+    <category term="实用教程" scheme="http://findmb.top/categories/%E5%AE%9E%E7%94%A8%E6%95%99%E7%A8%8B/"/>
+    
+    
+    <category term="服务器" scheme="http://findmb.top/tags/%E6%9C%8D%E5%8A%A1%E5%99%A8/"/>
+    
+    <category term="环境搭建" scheme="http://findmb.top/tags/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/"/>
+    
+    <category term="网络" scheme="http://findmb.top/tags/%E7%BD%91%E7%BB%9C/"/>
+    
+  </entry>
   
   <entry>
     <title>关于ROS Navigation小车失控的问题</title>
@@ -73,7 +102,7 @@
     <link href="http://findmb.top/posts/5699/"/>
     <id>http://findmb.top/posts/5699/</id>
     <published>2022-02-13T08:04:03.000Z</published>
-    <updated>2022-03-08T11:39:50.705Z</updated>
+    <updated>2022-04-21T14:40:24.340Z</updated>
     
     
       
@@ -89,32 +118,9 @@
     <category term="实用教程" scheme="http://findmb.top/categories/%E5%AE%9E%E7%94%A8%E6%95%99%E7%A8%8B/"/>
     
     
+    <category term="环境搭建" scheme="http://findmb.top/tags/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/"/>
+    
     <category term="opencv" scheme="http://findmb.top/tags/opencv/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>无处安放的根号-1</title>
-    <link href="http://findmb.top/posts/30320/"/>
-    <id>http://findmb.top/posts/30320/</id>
-    <published>2022-02-06T12:17:35.000Z</published>
-    <updated>2022-03-08T11:54:12.754Z</updated>
-    
-    
-      
-      
-        
-        
-    <summary type="html">&lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css&quot;&gt;&lt;h1 id=&quot;来玩个游戏吧&quot;&gt;&lt;a href=&quot;#来玩个游戏吧&quot;</summary>
-        
-      
-    
-    
-    
-    <category term="当然我在乱讲三七" scheme="http://findmb.top/categories/%E5%BD%93%E7%84%B6%E6%88%91%E5%9C%A8%E4%B9%B1%E8%AE%B2%E4%B8%89%E4%B8%83/"/>
-    
-    
-    <category term="数学" scheme="http://findmb.top/tags/%E6%95%B0%E5%AD%A6/"/>
     
   </entry>
   
@@ -223,7 +229,7 @@
     <link href="http://findmb.top/posts/37904/"/>
     <id>http://findmb.top/posts/37904/</id>
     <published>2021-01-01T12:37:45.000Z</published>
-    <updated>2022-03-08T11:38:43.338Z</updated>
+    <updated>2022-04-21T11:01:59.547Z</updated>
     
     
       
