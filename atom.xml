@@ -6,7 +6,7 @@
   <link href="http://findmb.top/atom.xml" rel="self"/>
   
   <link href="http://findmb.top/"/>
-  <updated>2022-04-21T14:42:35.514Z</updated>
+  <updated>2022-04-25T12:40:25.985Z</updated>
   <id>http://findmb.top/</id>
   
   <author>
@@ -17,18 +17,18 @@
   <generator uri="https://hexo.io/">Hexo</generator>
   
   <entry>
-    <title>一份借助frp实现内网穿透的简要说明</title>
-    <link href="http://findmb.top/posts/16409/"/>
-    <id>http://findmb.top/posts/16409/</id>
-    <published>2022-04-21T13:03:43.000Z</published>
-    <updated>2022-04-21T14:42:35.514Z</updated>
+    <title>面向开发的ubuntu系统分区方案介绍</title>
+    <link href="http://findmb.top/posts/12631/"/>
+    <id>http://findmb.top/posts/12631/</id>
+    <published>2022-04-25T01:56:37.000Z</published>
+    <updated>2022-04-25T12:40:25.985Z</updated>
     
     
       
       
         
         
-    <summary type="html">&lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css&quot;&gt;&lt;h2 id=&quot;frp&quot;&gt;&lt;a href=&quot;#frp&quot;</summary>
+    <summary type="html">&lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css&quot;&gt;&lt;h1 id=&quot;系统分区&quot;&gt;&lt;a href=&quot;#系统分区&quot;</summary>
         
       
     
@@ -37,9 +37,36 @@
     <category term="实用教程" scheme="http://findmb.top/categories/%E5%AE%9E%E7%94%A8%E6%95%99%E7%A8%8B/"/>
     
     
-    <category term="服务器" scheme="http://findmb.top/tags/%E6%9C%8D%E5%8A%A1%E5%99%A8/"/>
+    <category term="环境搭建" scheme="http://findmb.top/tags/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/"/>
+    
+    <category term="Linux" scheme="http://findmb.top/tags/Linux/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>一份借助frp实现内网穿透的简要说明</title>
+    <link href="http://findmb.top/posts/16409/"/>
+    <id>http://findmb.top/posts/16409/</id>
+    <published>2022-04-21T13:03:43.000Z</published>
+    <updated>2022-04-23T01:59:57.556Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css&quot;&gt;&lt;h1 id=&quot;frp&quot;&gt;&lt;a href=&quot;#frp&quot;</summary>
+        
+      
+    
+    
+    
+    <category term="实用教程" scheme="http://findmb.top/categories/%E5%AE%9E%E7%94%A8%E6%95%99%E7%A8%8B/"/>
+    
     
     <category term="环境搭建" scheme="http://findmb.top/tags/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/"/>
+    
+    <category term="服务器" scheme="http://findmb.top/tags/%E6%9C%8D%E5%8A%A1%E5%99%A8/"/>
     
     <category term="网络" scheme="http://findmb.top/tags/%E7%BD%91%E7%BB%9C/"/>
     
@@ -118,9 +145,9 @@
     <category term="实用教程" scheme="http://findmb.top/categories/%E5%AE%9E%E7%94%A8%E6%95%99%E7%A8%8B/"/>
     
     
-    <category term="环境搭建" scheme="http://findmb.top/tags/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/"/>
-    
     <category term="opencv" scheme="http://findmb.top/tags/opencv/"/>
+    
+    <category term="环境搭建" scheme="http://findmb.top/tags/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/"/>
     
   </entry>
   
