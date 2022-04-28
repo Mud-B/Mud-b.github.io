@@ -4,6 +4,37 @@
   
     
     <entry>
+      <title>基于waypoint的路径规划与控制算法的实现（上）</title>
+      <link href="/posts/6786/"/>
+      <url>/posts/6786/</url>
+      
+        <content type="html"><![CDATA[<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><h1 id="关于本文"><a href="#关于本文" class="headerlink" title="关于本文"></a>关于本文</h1><p>旨在解决差动转向的机器人在结构化道路中从A跑到B的问题。</p><h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>我看了下，室内移动机器人的slam自动导航算法有很多，但大多基于 A* 或改进 A* 算法实现的，显然不适用在结构化道路中。<br>那我想了下，自己接触过的Autoware的Waypoint_planner算法应该能实现，但Autoware面向阿克曼底盘，没法直接拿来用。</p><p>为了尽量避免Autoware被我的黑暗料理污染（基于keep it pure的原则），我决定自己用python写个类似的算法来解决上面的问题，就不在Autoware的代码上动手脚了。</p><h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>本算法主要由waypoint_saver跟waypoint_follower这两部分组成，一个录制轨迹，一个跟随轨迹。本文主要介绍轨迹点数据格式跟waypoint_saver算法及设计思路。</p><h1 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h1><p>本算法只提供简单的规划和控制部分，所以跑本算法有以下几点prerequisition：</p><ol><li>python2</li><li>ROS基础依赖，tf跟geometry_msgs是必要的</li><li>已实现定位，能提供baselink到map的tf（可修改）</li></ol><p>前两点是没什么异议的，至于第三点定位部分的实现可以有很多，只要能以tf的形式发布小车的定位信息即可，本算法定位是Autoware自带的ndt配准算法实现的。</p><h1 id="轨迹录制"><a href="#轨迹录制" class="headerlink" title="轨迹录制"></a>轨迹录制</h1><p>下面正式介绍waypoint_saver算法。</p><h2 id="轨迹点格式"><a href="#轨迹点格式" class="headerlink" title="轨迹点格式"></a>轨迹点格式</h2><p>首先是轨迹点数据格式的设计，从实际控制的角度出发，差动型小车就纵向跟横向控制，也就是控制速度跟转角就够了。</p><p>我想了下，速度可以给个定值，这样就只需要转角控制即可。所以轨迹点只要提供以下信息：</p><ol><li>位置信息：录制小车当前在地图上的x跟y坐标</li><li>姿态信息：录制小车当前在地图上的yaw角</li><li>索引值：用来管理这些轨迹点</li></ol><p>存放轨迹点的文件类型我采用跟Autoware一样的csv文件格式，一方面它看起来直观另一方面它用起来也方便，所以最终数据存放格式如下所示：</p><table><thead><tr><th>Idx</th><th>x</th><th>y</th><th>yaw</th></tr></thead><tbody><tr><td>0</td><td>0</td><td>0</td><td>0</td></tr><tr><td>…</td><td>…</td><td>…</td><td>…</td></tr></tbody></table><h2 id="流程图"><a href="#流程图" class="headerlink" title="流程图"></a>流程图</h2><p>下面是轨迹录制算法的流程图。它的原理很简单，基于时间间隔对定位信息进行采样，只要隔一段时间能获取到定位信息就把信息写入到csv文件中，直到你把程序（<kbd>Ctrl</kbd>+<kbd>c</kbd>）kill掉就结束录制。</p><div id="flowchart-0" class="flow-chart"></div><h2 id="主程序"><a href="#主程序" class="headerlink" title="主程序"></a>主程序</h2><p>waypoint_saver我写的还是蛮通俗的，所以简单提下，程序入口在最底下if <strong>name</strong> &#x3D;&#x3D; “<strong>main</strong>“:那里，主循环跑的是_run()函数。结和上面的流程图来看应该很清晰，它一直在获取位姿、处理轨迹、写入文件。</p><p>这里轨迹点处理部分本来留给自己优化的，想着可能对轨迹点需要滤波平滑等处理，但后来发现控制程序里做点小处理也能跑，就没优化了。如果需要读者可自行修改。</p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> rospy   </span><br><span class="line"><span class="keyword">from</span> tf_conversions <span class="keyword">import</span> transformations     </span><br><span class="line"><span class="keyword">import</span> tf    </span><br><span class="line"><span class="keyword">import</span> csv</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">WayPointSaver</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>):</span><br><span class="line">        self._pIdx = <span class="number">0</span></span><br><span class="line">        self._wp = []</span><br><span class="line">        self._header = [<span class="string">&#x27;Idx&#x27;</span>,<span class="string">&#x27;x&#x27;</span>,<span class="string">&#x27;y&#x27;</span>,<span class="string">&#x27;yaw&#x27;</span>]</span><br><span class="line">        self._filename = <span class="string">&#x27;waypoints.csv&#x27;</span></span><br><span class="line">        self.tf_listener = tf.TransformListener()</span><br><span class="line">        <span class="keyword">with</span> <span class="built_in">open</span>(self._filename,<span class="string">&#x27;w&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">                wtr = csv.writer(f)</span><br><span class="line">                wtr.writerow(self._header)</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">_get_wp</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="string">&#x27;&#x27;&#x27; get current pose &#x27;&#x27;&#x27;</span></span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            trans, rot = self.tf_listener.lookupTransform(<span class="string">&#x27;/map&#x27;</span>, <span class="string">&#x27;/base_link&#x27;</span>, rospy.Time(<span class="number">0</span>))</span><br><span class="line">        <span class="keyword">except</span> (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException):</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        roll,pitch,yaw = transformations.euler_from_quaternion(rot)  </span><br><span class="line">        x = trans[<span class="number">0</span>]</span><br><span class="line">        y = trans[<span class="number">1</span>]</span><br><span class="line">        <span class="keyword">if</span> x <span class="keyword">and</span> y:</span><br><span class="line">            self._wp = [self._pIdx, x, y, yaw]</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">True</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">_process_wp</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="string">&#x27;&#x27;&#x27; process points &#x27;&#x27;&#x27;</span></span><br><span class="line">        <span class="comment"># your can put your own code here</span></span><br><span class="line">        self._pIdx += <span class="number">1</span></span><br><span class="line">        </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">_write_file</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="string">&#x27;&#x27;&#x27; write point to file &#x27;&#x27;&#x27;</span></span><br><span class="line">        <span class="keyword">with</span> <span class="built_in">open</span>(self._filename,<span class="string">&#x27;a&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">            wtr = csv.writer(f)</span><br><span class="line">            wtr.writerow(self._wp)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">run</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="string">&#x27;&#x27;&#x27; main loop &#x27;&#x27;&#x27;</span></span><br><span class="line">        <span class="keyword">if</span> self._get_wp():</span><br><span class="line">            self._process_wp()</span><br><span class="line">            self._write_file()</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    rospy.init_node(<span class="string">&#x27;wayPoint_saver&#x27;</span>)   </span><br><span class="line">    saver = WayPointSaver()</span><br><span class="line">    r = rospy.Rate(<span class="number">2</span>)</span><br><span class="line">    <span class="keyword">while</span> <span class="keyword">not</span> rospy.is_shutdown():  </span><br><span class="line">        saver.run()</span><br><span class="line">        r.sleep()</span><br></pre></td></tr></table></figure><script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.2.7/raphael.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/flowchart/1.6.5/flowchart.min.js"></script><textarea id="flowchart-0-code" style="display: none">st=>start: Startinial=>operation: Inital nodeint=>condition: Key Interruptgetp=>condition: Get current pose?processp=>inputoutput: Process current pose writep=>inputoutput: Write pose to fileend=>end: Endst->inial->int(yes)->endint(no)->getp(yes)->processp->writep(left)->intgetp(no)->int</textarea><textarea id="flowchart-0-options" style="display: none">{"scale":1,"line-width":2,"line-length":50,"text-margin":10,"font-size":12}</textarea><script>  var code = document.getElementById("flowchart-0-code").value;  var options = JSON.parse(decodeURIComponent(document.getElementById("flowchart-0-options").value));  var diagram = flowchart.parse(code);  diagram.drawSVG("flowchart-0", options);</script>]]></content>
+      
+      
+      <categories>
+          
+          <category> 实用教程 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> Python </tag>
+            
+            <tag> ROS </tag>
+            
+            <tag> Autonomous Driving </tag>
+            
+            <tag> Motion Planning </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>面向开发的ubuntu系统分区方案介绍</title>
       <link href="/posts/12631/"/>
       <url>/posts/12631/</url>
@@ -49,6 +80,8 @@
             
             <tag> 环境搭建 </tag>
             
+            <tag> Linux </tag>
+            
             <tag> 服务器 </tag>
             
             <tag> 网络 </tag>
@@ -76,9 +109,13 @@
       
         <tags>
             
+            <tag> C/C++ </tag>
+            
             <tag> ROS </tag>
             
-            <tag> 自动驾驶 </tag>
+            <tag> Autonomous Driving </tag>
+            
+            <tag> Motion Planning </tag>
             
         </tags>
       
@@ -127,6 +164,8 @@
       
       
         <tags>
+            
+            <tag> Python </tag>
             
             <tag> opencv </tag>
             
@@ -205,6 +244,8 @@
       
         <tags>
             
+            <tag> C/C++ </tag>
+            
             <tag> Arduino </tag>
             
         </tags>
@@ -279,6 +320,8 @@
       
       
         <tags>
+            
+            <tag> Linux </tag>
             
             <tag> 服务器 </tag>
             

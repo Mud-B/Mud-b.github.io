@@ -6,7 +6,7 @@
   <link href="http://findmb.top/atom.xml" rel="self"/>
   
   <link href="http://findmb.top/"/>
-  <updated>2022-04-25T12:40:25.985Z</updated>
+  <updated>2022-04-28T14:58:49.563Z</updated>
   <id>http://findmb.top/</id>
   
   <author>
@@ -15,6 +15,37 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>基于waypoint的路径规划与控制算法的实现（上）</title>
+    <link href="http://findmb.top/posts/6786/"/>
+    <id>http://findmb.top/posts/6786/</id>
+    <published>2022-04-26T12:19:37.000Z</published>
+    <updated>2022-04-28T14:58:49.563Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css&quot;&gt;&lt;h1 id=&quot;关于本文&quot;&gt;&lt;a href=&quot;#关于本文&quot;</summary>
+        
+      
+    
+    
+    
+    <category term="实用教程" scheme="http://findmb.top/categories/%E5%AE%9E%E7%94%A8%E6%95%99%E7%A8%8B/"/>
+    
+    
+    <category term="Python" scheme="http://findmb.top/tags/Python/"/>
+    
+    <category term="ROS" scheme="http://findmb.top/tags/ROS/"/>
+    
+    <category term="Autonomous Driving" scheme="http://findmb.top/tags/Autonomous-Driving/"/>
+    
+    <category term="Motion Planning" scheme="http://findmb.top/tags/Motion-Planning/"/>
+    
+  </entry>
   
   <entry>
     <title>面向开发的ubuntu系统分区方案介绍</title>
@@ -48,7 +79,7 @@
     <link href="http://findmb.top/posts/16409/"/>
     <id>http://findmb.top/posts/16409/</id>
     <published>2022-04-21T13:03:43.000Z</published>
-    <updated>2022-04-23T01:59:57.556Z</updated>
+    <updated>2022-04-26T10:20:41.519Z</updated>
     
     
       
@@ -66,6 +97,8 @@
     
     <category term="环境搭建" scheme="http://findmb.top/tags/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/"/>
     
+    <category term="Linux" scheme="http://findmb.top/tags/Linux/"/>
+    
     <category term="服务器" scheme="http://findmb.top/tags/%E6%9C%8D%E5%8A%A1%E5%99%A8/"/>
     
     <category term="网络" scheme="http://findmb.top/tags/%E7%BD%91%E7%BB%9C/"/>
@@ -77,7 +110,7 @@
     <link href="http://findmb.top/posts/55934/"/>
     <id>http://findmb.top/posts/55934/</id>
     <published>2022-02-28T12:44:49.000Z</published>
-    <updated>2022-03-08T11:40:02.555Z</updated>
+    <updated>2022-04-27T10:48:30.636Z</updated>
     
     
       
@@ -93,9 +126,13 @@
     <category term="实用教程" scheme="http://findmb.top/categories/%E5%AE%9E%E7%94%A8%E6%95%99%E7%A8%8B/"/>
     
     
+    <category term="C/C++" scheme="http://findmb.top/tags/C-C/"/>
+    
     <category term="ROS" scheme="http://findmb.top/tags/ROS/"/>
     
-    <category term="自动驾驶" scheme="http://findmb.top/tags/%E8%87%AA%E5%8A%A8%E9%A9%BE%E9%A9%B6/"/>
+    <category term="Autonomous Driving" scheme="http://findmb.top/tags/Autonomous-Driving/"/>
+    
+    <category term="Motion Planning" scheme="http://findmb.top/tags/Motion-Planning/"/>
     
   </entry>
   
@@ -129,7 +166,7 @@
     <link href="http://findmb.top/posts/5699/"/>
     <id>http://findmb.top/posts/5699/</id>
     <published>2022-02-13T08:04:03.000Z</published>
-    <updated>2022-04-21T14:40:24.340Z</updated>
+    <updated>2022-04-26T12:26:46.413Z</updated>
     
     
       
@@ -144,6 +181,8 @@
     
     <category term="实用教程" scheme="http://findmb.top/categories/%E5%AE%9E%E7%94%A8%E6%95%99%E7%A8%8B/"/>
     
+    
+    <category term="Python" scheme="http://findmb.top/tags/Python/"/>
     
     <category term="opencv" scheme="http://findmb.top/tags/opencv/"/>
     
@@ -206,7 +245,7 @@
     <link href="http://findmb.top/posts/6985/"/>
     <id>http://findmb.top/posts/6985/</id>
     <published>2021-06-29T03:12:18.000Z</published>
-    <updated>2022-03-08T11:41:02.778Z</updated>
+    <updated>2022-04-26T12:25:53.746Z</updated>
     
     
       
@@ -221,6 +260,8 @@
     
     <category term="实用教程" scheme="http://findmb.top/categories/%E5%AE%9E%E7%94%A8%E6%95%99%E7%A8%8B/"/>
     
+    
+    <category term="C/C++" scheme="http://findmb.top/tags/C-C/"/>
     
     <category term="Arduino" scheme="http://findmb.top/tags/Arduino/"/>
     
@@ -281,7 +322,7 @@
     <link href="http://findmb.top/posts/42242/"/>
     <id>http://findmb.top/posts/42242/</id>
     <published>2020-12-03T10:13:25.000Z</published>
-    <updated>2022-03-08T11:41:29.836Z</updated>
+    <updated>2022-04-26T10:20:04.071Z</updated>
     
     
       
@@ -296,6 +337,8 @@
     
     <category term="实用教程" scheme="http://findmb.top/categories/%E5%AE%9E%E7%94%A8%E6%95%99%E7%A8%8B/"/>
     
+    
+    <category term="Linux" scheme="http://findmb.top/tags/Linux/"/>
     
     <category term="服务器" scheme="http://findmb.top/tags/%E6%9C%8D%E5%8A%A1%E5%99%A8/"/>
     
