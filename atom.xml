@@ -6,7 +6,7 @@
   <link href="http://findmb.top/atom.xml" rel="self"/>
   
   <link href="http://findmb.top/"/>
-  <updated>2022-04-28T14:58:49.563Z</updated>
+  <updated>2022-04-25T12:40:25.985Z</updated>
   <id>http://findmb.top/</id>
   
   <author>
@@ -15,37 +15,6 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
-  
-  <entry>
-    <title>基于waypoint的路径规划与控制算法的实现（上）</title>
-    <link href="http://findmb.top/posts/6786/"/>
-    <id>http://findmb.top/posts/6786/</id>
-    <published>2022-04-26T12:19:37.000Z</published>
-    <updated>2022-04-28T14:58:49.563Z</updated>
-    
-    
-      
-      
-        
-        
-    <summary type="html">&lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css&quot;&gt;&lt;h1 id=&quot;关于本文&quot;&gt;&lt;a href=&quot;#关于本文&quot;</summary>
-        
-      
-    
-    
-    
-    <category term="实用教程" scheme="http://findmb.top/categories/%E5%AE%9E%E7%94%A8%E6%95%99%E7%A8%8B/"/>
-    
-    
-    <category term="Python" scheme="http://findmb.top/tags/Python/"/>
-    
-    <category term="ROS" scheme="http://findmb.top/tags/ROS/"/>
-    
-    <category term="Autonomous Driving" scheme="http://findmb.top/tags/Autonomous-Driving/"/>
-    
-    <category term="Motion Planning" scheme="http://findmb.top/tags/Motion-Planning/"/>
-    
-  </entry>
   
   <entry>
     <title>面向开发的ubuntu系统分区方案介绍</title>
@@ -68,9 +37,9 @@
     <category term="实用教程" scheme="http://findmb.top/categories/%E5%AE%9E%E7%94%A8%E6%95%99%E7%A8%8B/"/>
     
     
-    <category term="环境搭建" scheme="http://findmb.top/tags/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/"/>
-    
     <category term="Linux" scheme="http://findmb.top/tags/Linux/"/>
+    
+    <category term="环境搭建" scheme="http://findmb.top/tags/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/"/>
     
   </entry>
   
@@ -95,13 +64,75 @@
     <category term="实用教程" scheme="http://findmb.top/categories/%E5%AE%9E%E7%94%A8%E6%95%99%E7%A8%8B/"/>
     
     
-    <category term="环境搭建" scheme="http://findmb.top/tags/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/"/>
-    
     <category term="Linux" scheme="http://findmb.top/tags/Linux/"/>
     
     <category term="服务器" scheme="http://findmb.top/tags/%E6%9C%8D%E5%8A%A1%E5%99%A8/"/>
     
+    <category term="环境搭建" scheme="http://findmb.top/tags/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/"/>
+    
     <category term="网络" scheme="http://findmb.top/tags/%E7%BD%91%E7%BB%9C/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>基于waypoint的路径规划与控制算法的实现（下）</title>
+    <link href="http://findmb.top/posts/16494/"/>
+    <id>http://findmb.top/posts/16494/</id>
+    <published>2022-03-07T12:16:07.000Z</published>
+    <updated>2022-05-02T05:04:36.241Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css&quot;&gt;&lt;h1 id=&quot;关于本文&quot;&gt;&lt;a href=&quot;#关于本文&quot;</summary>
+        
+      
+    
+    
+    
+    <category term="实用教程" scheme="http://findmb.top/categories/%E5%AE%9E%E7%94%A8%E6%95%99%E7%A8%8B/"/>
+    
+    
+    <category term="ROS" scheme="http://findmb.top/tags/ROS/"/>
+    
+    <category term="Autonomous Driving" scheme="http://findmb.top/tags/Autonomous-Driving/"/>
+    
+    <category term="Motion Planning" scheme="http://findmb.top/tags/Motion-Planning/"/>
+    
+    <category term="Python" scheme="http://findmb.top/tags/Python/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>基于waypoint的路径规划与控制算法的实现（上）</title>
+    <link href="http://findmb.top/posts/6786/"/>
+    <id>http://findmb.top/posts/6786/</id>
+    <published>2022-03-01T12:19:37.000Z</published>
+    <updated>2022-05-01T15:32:42.724Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css&quot;&gt;&lt;h1 id=&quot;关于本文&quot;&gt;&lt;a href=&quot;#关于本文&quot;</summary>
+        
+      
+    
+    
+    
+    <category term="实用教程" scheme="http://findmb.top/categories/%E5%AE%9E%E7%94%A8%E6%95%99%E7%A8%8B/"/>
+    
+    
+    <category term="ROS" scheme="http://findmb.top/tags/ROS/"/>
+    
+    <category term="Autonomous Driving" scheme="http://findmb.top/tags/Autonomous-Driving/"/>
+    
+    <category term="Motion Planning" scheme="http://findmb.top/tags/Motion-Planning/"/>
+    
+    <category term="Python" scheme="http://findmb.top/tags/Python/"/>
     
   </entry>
   
@@ -182,11 +213,11 @@
     <category term="实用教程" scheme="http://findmb.top/categories/%E5%AE%9E%E7%94%A8%E6%95%99%E7%A8%8B/"/>
     
     
+    <category term="环境搭建" scheme="http://findmb.top/tags/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/"/>
+    
     <category term="Python" scheme="http://findmb.top/tags/Python/"/>
     
     <category term="opencv" scheme="http://findmb.top/tags/opencv/"/>
-    
-    <category term="环境搭建" scheme="http://findmb.top/tags/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/"/>
     
   </entry>
   
