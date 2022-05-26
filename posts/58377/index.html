@@ -11,7 +11,7 @@
   
   <title>
     
-      基于waypoint的路径规划与控制算法的实现（上） 
+      从设计的角度看Autoware矢量地图数据格式 
       
       
       |
@@ -148,11 +148,11 @@ MathJax = {
   <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
   <div class="container post-details" id="post-details">
     <div class="post-content">
-      <div class="post-title">基于waypoint的路径规划与控制算法的实现（上）</div>
+      <div class="post-title">从设计的角度看Autoware矢量地图数据格式</div>
       <div class="post-attach">
         <span class="post-pubtime">
           <i class="iconfont icon-updatetime" title="更新时间"></i>
-          2022-03-01 20:19:37
+          2022-05-22 22:20:37
         </span>
         
               <span class="post-categories">
@@ -170,90 +170,304 @@ MathJax = {
                 <i class="iconfont icon-tags" title="标签"></i>
                 
                 <span class="span--tag">
+                  <a href="/tags/Autoware/" title="Autoware">
+                    <b>#</b> Autoware
+                  </a>
+                </span>
+                
+                <span class="span--tag">
                   <a href="/tags/Autonomous-Driving/" title="Autonomous Driving">
                     <b>#</b> Autonomous Driving
                   </a>
                 </span>
                 
                 <span class="span--tag">
-                  <a href="/tags/Python/" title="Python">
-                    <b>#</b> Python
-                  </a>
-                </span>
-                
-                <span class="span--tag">
-                  <a href="/tags/ROS/" title="ROS">
-                    <b>#</b> ROS
-                  </a>
-                </span>
-                
-                <span class="span--tag">
-                  <a href="/tags/Motion-Planning/" title="Motion Planning">
-                    <b>#</b> Motion Planning
+                  <a href="/tags/HD-Map/" title="HD Map">
+                    <b>#</b> HD Map
                   </a>
                 </span>
                 
               </span>
           
         </br>
-        <span class="post-count">字数：1k</span>
-        <span class="post-count">阅读时长：4min</span>
+        <span class="post-count">字数：1.6k</span>
+        <span class="post-count">阅读时长：5min</span>
       </div>
       <div class="markdown-body">
-        <h1 id="关于本文"><a href="#关于本文" class="headerlink" title="关于本文"></a>关于本文</h1><p>旨在解决差动转向的机器人在结构化道路中从A跑到B的问题。</p>
-<h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>我看了下，室内移动机器人的slam自动导航算法有很多，但大多基于 A* 或改进 A* 算法实现的，显然不适用在结构化道路中。<br>那我想了下，自己接触过的Autoware的Waypoint_planner算法应该能实现，但Autoware面向阿克曼底盘，没法直接拿来用。</p>
-<p>为了尽量避免Autoware被我的黑暗料理污染（基于keep it pure的原则），我决定自己用python写个类似的算法来解决上面的问题，就不在Autoware的代码上动手脚了。</p>
-<h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>本算法主要由waypoint_saver跟waypoint_follower这两部分组成，一个录制路径，一个跟随路径。本文主要介绍路径点数据格式跟waypoint_saver算法及设计思路。</p>
-<h1 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h1><p>本算法只提供简单的规划和控制部分，所以跑本算法有以下几点prerequisitions：</p>
-<ol>
-<li>python2</li>
-<li>ROS1</li>
-<li>已实现定位，能提供baselink到map的tf（可修改）</li>
+        <h1 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h1><p>Autoware csv格式的矢量地图字段名定义是比较神奇，而且由于这个定义是Asia公司提供的没有开源<sup id="fnref:1"><a href="#fn:1" rel="footnote"><span class="hint--top hint--error hint--medium hint--rounded hint--bounce" aria-label="关于矢量地图的数据格式定义未开源的原因，可在 Autoware.ai 的 [issue1158](https://github.com/Autoware-AI/autoware.ai/issues/1158) 讨论下 Joshua Whitley 的回复中找到。
+">[1]</span></a></sup>。如果不特地做下记录的话，还是挺难一下子记住的。作为Autoware planning模块的主要输入，好好看一下它，对理解Autoware决策规划的相关代码还是有挺大帮助的。</p>
+<h2 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h2><ol>
+<li>有关Autoware矢量地图的消息定义可以在这里<sup id="fnref:2"><a href="#fn:2" rel="footnote"><span class="hint--top hint--error hint--medium hint--rounded hint--bounce" aria-label="Autoware csv 格式的矢量地图[消息定义](https://github.com/Autoware-AI/messages/tree/master/vector_map_msgs/msg)
+">[2]</span></a></sup>找到；</li>
+<li>画过矢量地图会更好地帮助我们理解里面的概念，所以我建议大家可以借助这份说明<sup id="fnref:3"><a href="#fn:3" rel="footnote"><span class="hint--top hint--error hint--medium hint--rounded hint--bounce" aria-label="Autoware Tools 在线矢量地图绘制工具的[使用说明](https://tools.tier4.jp/vector_map_builder/user_guide/)
+">[3]</span></a></sup>来简单画下csv格式的矢量地图。</li>
 </ol>
-<p>前两点是没什么异议的，至于第三点定位部分的实现可以有很多，只要能以tf的形式发布小车的定位信息即可，本算法定位是Autoware自带的ndt配准算法实现的。</p>
-<h1 id="路径录制"><a href="#路径录制" class="headerlink" title="路径录制"></a>路径录制</h1><p>下面正式介绍waypoint_saver算法。</p>
-<h2 id="路径点格式"><a href="#路径点格式" class="headerlink" title="路径点格式"></a>路径点格式</h2><p>首先是路径点数据格式的设计，从实际控制的角度出发，差动型小车就纵向跟横向控制，也就是控制速度跟转角就够了。</p>
-<p>我想了下，速度可以给个定值，这样就只需要转角控制即可。所以路径点只要提供以下信息：</p>
-<ol>
-<li>位置信息：录制小车当前在地图上的x跟y坐标</li>
-<li>姿态信息：录制小车当前在地图上的yaw角</li>
-<li>索引值：用来管理这些路径点</li>
-</ol>
-<p>存放路径点的文件类型我采用跟Autoware一样的csv文件格式，一方面它看起来直观另一方面它用起来也方便，所以最终数据存放格式如下所示：</p>
+<h1 id="基本元素"><a href="#基本元素" class="headerlink" title="基本元素"></a>基本元素</h1><p>首先如果让我们来定义高精地图，我们会从哪里出发？我想我的话会从<font color="blue">点线面</font>这样的基本模型出发。那Autoware呢，也是如此。在我之前分享的矢量地图消息定义<sup id="fnref:2"><a href="#fn:2" rel="footnote"><span class="hint--top hint--error hint--medium hint--rounded hint--bounce" aria-label="Autoware csv 格式的矢量地图[消息定义](https://github.com/Autoware-AI/messages/tree/master/vector_map_msgs/msg)
+">[2]</span></a></sup>目录下，Point.msg，Line.msg、Area.msg这三个文件就分别对应点线面这三个元素，那就一个个来介绍吧。</p>
+<h2 id="Point"><a href="#Point" class="headerlink" title="Point"></a>Point</h2><p>点是构成车道线、停止线等道路信息最基本的元素，但在Autoware的矢量地图格式里是较复杂的，下表是我对它格式的注解。</p>
 <table>
 <thead>
 <tr>
-<th>Idx</th>
-<th>x</th>
-<th>y</th>
-<th>yaw</th>
+<th>字段名</th>
+<th>数据类型</th>
+<th>描述</th>
 </tr>
 </thead>
 <tbody><tr>
-<td>0</td>
-<td>0</td>
-<td>0</td>
-<td>0</td>
+<td>pid</td>
+<td>int32</td>
+<td>point id，点的索引值，用于管理</td>
 </tr>
 <tr>
-<td>…</td>
-<td>…</td>
-<td>…</td>
-<td>…</td>
+<td>b</td>
+<td>float64</td>
+<td>Latitude，点的纬度</td>
+</tr>
+<tr>
+<td>l</td>
+<td>float64</td>
+<td>Longitude，点的经度</td>
+</tr>
+<tr>
+<td>h</td>
+<td>float64</td>
+<td>Height，点的海拔</td>
+</tr>
+<tr>
+<td>bx</td>
+<td>float64</td>
+<td>Latitude in x coordinate，点的纬度转化到地图x轴上的坐标值</td>
+</tr>
+<tr>
+<td>ly</td>
+<td>float64</td>
+<td>Longitude in y coordinate，点的经度转化到地图y轴上的坐标值</td>
+</tr>
+<tr>
+<td>ref</td>
+<td>int32</td>
+<td>reference num，对应的是日本矩形平面的编号<sup id="fnref:4"><a href="#fn:4" rel="footnote"><span class="hint--top hint--error hint--medium hint--rounded hint--bounce" aria-label="这是看起来比较直观的[日本平面直角坐标系](https://www.gsi.go.jp/sokuchikijun/jpc.html)，点进去可以查看对应的参考平面信息。总共19个，是跟程序对应的。">[4]</span></a></sup>，它跟点的经纬度值转成xy坐标值所参考的原点有关联</td>
+</tr>
+<tr>
+<td>mcodeX</td>
+<td>int32</td>
+<td>mcode1，2，3这三个字段值属于magic number范畴，它们的作用没法明确，但不会影响后续代码阅读</td>
 </tr>
 </tbody></table>
-<h2 id="流程图"><a href="#流程图" class="headerlink" title="流程图"></a>流程图</h2><p>下面是路径录制算法的流程图。它的原理很简单，基于时间间隔对定位信息进行采样，只要隔一段时间能获取到定位信息就把信息写入到csv文件中，直到你把程序（<kbd>Ctrl</kbd>+<kbd>c</kbd>）kill掉就结束录制。</p>
-<p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAAEsCAMAAABOo35HAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAAC9UExURVlZWdPT07KysmRkZIWFhfT09JmZmWZmZm9vb39/fxkZGUxMTDMzM3p6epCQkKamppubm729venp6cjIyN7e3tbW1s/Pz8LCwnx8fLS0tFZWVoiIiI+Pj6GhoeTk5Glpabu7u93d3evr66CgoJSUlKqqqsnJyeDg4Hd3d8PDw+Xl5bi4uNHR0dvb26Ojo6urq+fn51hYWDg4OCgoKHBwcK2traenp0FBQe7u7vHx8U5OTre3t8zMzHV1df///7GrnpQAAAA/dFJOU///////////////////////////////////////////////////////////////////////////////////AI4mfBcAAAUGSURBVHja7NoJb6M4GMZxY0NCD64kve/pMZ2d3Z297+X7f6zFNmBAMUXa6URl/q9UJSWPUPzrizFWRUlNLgEBWGCBBRZYYEEAFlhggQUWWBCABRZYYIEFFgRggQUWWGCBBQFYYIEFFlhgQQAWWGCBBRZYEIAFFlhggQUWBGCBBRZYYIEFAVhggQUWWGBBABZYYIEFFlgQgAUWWGCBBRYEYIEFFlhggQUBWGCBBRZYYEEAFlhggQUWWBCABRZYYIEFFgRggQUWWGCBBQFYYIEFFlhgQQAWWGCBBRZYEIAFFlhggQUWBGCBBRZYn6cCIcRXgvX/h9qcIVBqDdbEM8RCxGCB9QqXYRwHYDHBgwXWl8eKZKiESHI3Ba1kWs3fKixcaJUl1YyeBm7Ocq+yLItUiVBGnXxenSHJolIKEcwHq6ikbOX1YGVzQCTN8LPmSLreghUl9sN4Uw7yajMrLC0TZ1ImzqY6FEop0+pIaEN5HaoOxVuwEqFyc4I46uSlzOLqgxlh6UaR9l3VYWl9Fdoxb1Q90KJtu41pwwFW/WHhTtW8i7TafLCqRsk6bsGw63L9qurXRmuIlbT9lDQnlXU+nBFW1Q2qnZbDprWa2tjR90LZFqx1/+Td/HpGWLlrLDvIwTcx6dQ1Vrntbig68cDms3JwbA5Y1azs1ger6sNV/bbIw1jU81MvNAGrl58RVn8ozW+btF08iGFoAlYvP3csfVur1gJBEIA1uBmue5dhZDOyO2epbmgCVi8/I6x0MMHH9pjsTfBhNzQBq5uPZoQlB0uH3DZG4EZqQ26fL3sZq5uf09Ih6qw3i/pm6BZO0qZX7rrUS68Xsbr5ZE4rePMk08pk9aUZugfqppvs6AM1Acvlo/StP+6EbW06z8hJqxbYp2BZPQUnFsLsKuhQdaHqn5ewbF7KXIn0jWO5MqOQ7RaNLPtbNMmmhimj0GUmYLl8Gs0Lq4wyPbTu1l2QKqHSouzs3OlDIslW5SQsnY/NXmFplyNvEuuLV/Tau9BzwiraDUSwXmysztYWWNtL1psXeumgIrDGaqXvBfUuvtqUYI3V2t1wk1e2msFluJJm6zDJXv/fIfjPP7DAAgsssCiwwAILLLDAosACCyywwAKLAgsssMACC6zt9fDz/v75tyOB+98PD2+ORgKffjw4OP1uJPDxl+Xy8v1I4MPF3t7VNyOB4/vF4uzdzrG+39f1kz/w66Guv/yBvw90KX/gZKkr8Qf+2dOV+gNHC12/7RxrabD2/a31bLAO/a11YbAO/K21MFhLf2s9Gqw9f2vdGqzFu11jnVusE2/gxmI9eQOnFuvYG7i0WH7uK4t15w2cWazrXWP9a7H8f/bQYvm/6IPF+sF/pVssf19Ii/WH/0K2WH/uGuvEWC39gSdj9Twy+Rqri5EZx1gt/IE7Y/XoD1wbq9vd3w1PlufnD2OBp+ebm/uxwPHF6emnscDR4vLy41jg7vHq6sNY4Pr27OyYdRaLUrDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssL6u+k+AAQCR9eHtLKvLfwAAAABJRU5ErkJggg==" data-original="https://s1.ax1x.com/2022/05/01/OCX9SK.png" alt="waypoint_saver"></p>
-<h2 id="主程序"><a href="#主程序" class="headerlink" title="主程序"></a>主程序</h2><p>waypoint_saver我写的还是蛮通俗的，所以简单提下，程序入口在最底下<code>if __name__ == &quot;__main__&quot;:</code>那里，主循环跑的是<code>WayPointSaver()</code>对象的<code>_run()</code>函数。结和上面的流程图来看应该很清晰，它一直在获取路径点、处理路径点、写入路径点到文件。</p>
-<p>这里路径点处理部分本来留给自己优化的，想着可能对路径点需要做平滑滤波等处理，但后来发现控制程序里做点小处理也能跑，就没优化了。如果需要读者可自行修改。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> rospy   </span><br><span class="line"><span class="keyword">from</span> tf_conversions <span class="keyword">import</span> transformations     </span><br><span class="line"><span class="keyword">import</span> tf    </span><br><span class="line"><span class="keyword">import</span> csv</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">WayPointSaver</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>):</span><br><span class="line">        self._pIdx = <span class="number">0</span></span><br><span class="line">        self._wp = []</span><br><span class="line">        self._header = [<span class="string">&#x27;Idx&#x27;</span>,<span class="string">&#x27;x&#x27;</span>,<span class="string">&#x27;y&#x27;</span>,<span class="string">&#x27;yaw&#x27;</span>]</span><br><span class="line">        self._filename = <span class="string">&#x27;waypoints.csv&#x27;</span></span><br><span class="line">        self.tf_listener = tf.TransformListener()</span><br><span class="line">        <span class="keyword">with</span> <span class="built_in">open</span>(self._filename,<span class="string">&#x27;w&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">                wtr = csv.writer(f)</span><br><span class="line">                wtr.writerow(self._header)</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">_get_wp</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="string">&#x27;&#x27;&#x27; get current pose &#x27;&#x27;&#x27;</span></span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            trans, rot = self.tf_listener.lookupTransform(<span class="string">&#x27;/map&#x27;</span>, <span class="string">&#x27;/base_link&#x27;</span>, rospy.Time(<span class="number">0</span>))</span><br><span class="line">        <span class="keyword">except</span> (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException):</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        roll,pitch,yaw = transformations.euler_from_quaternion(rot)  </span><br><span class="line">        x = trans[<span class="number">0</span>]</span><br><span class="line">        y = trans[<span class="number">1</span>]</span><br><span class="line">        <span class="keyword">if</span> x <span class="keyword">and</span> y:</span><br><span class="line">            self._wp = [self._pIdx, x, y, yaw]</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">True</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">_process_wp</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="string">&#x27;&#x27;&#x27; process points &#x27;&#x27;&#x27;</span></span><br><span class="line">        <span class="comment"># your can put your own code here</span></span><br><span class="line">        self._pIdx += <span class="number">1</span></span><br><span class="line">        </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">_write_file</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="string">&#x27;&#x27;&#x27; write point to file &#x27;&#x27;&#x27;</span></span><br><span class="line">        <span class="keyword">with</span> <span class="built_in">open</span>(self._filename,<span class="string">&#x27;a&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">            wtr = csv.writer(f)</span><br><span class="line">            wtr.writerow(self._wp)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">run</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="string">&#x27;&#x27;&#x27; main loop &#x27;&#x27;&#x27;</span></span><br><span class="line">        <span class="keyword">if</span> self._get_wp():</span><br><span class="line">            self._process_wp()</span><br><span class="line">            self._write_file()</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    rospy.init_node(<span class="string">&#x27;wayPoint_saver&#x27;</span>)   </span><br><span class="line">    saver = WayPointSaver()</span><br><span class="line">    r = rospy.Rate(<span class="number">2</span>)</span><br><span class="line">    <span class="keyword">while</span> <span class="keyword">not</span> rospy.is_shutdown():  </span><br><span class="line">        saver.run()</span><br><span class="line">        r.sleep()</span><br></pre></td></tr></table></figure>
-
+<h2 id="Line"><a href="#Line" class="headerlink" title="Line"></a>Line</h2><p>两个点确定一条直线，再添加前一条线跟后一条线的索引值，就构成了Autoware矢量地图格式里最基本的线，如下所示。</p>
+<table>
+<thead>
+<tr>
+<th>字段名</th>
+<th>数据类型</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>lid</td>
+<td>int32</td>
+<td>line id，线的索引值</td>
+</tr>
+<tr>
+<td>bpid</td>
+<td>int32</td>
+<td>Begining Point id，起始点索引</td>
+</tr>
+<tr>
+<td>fpid</td>
+<td>int32</td>
+<td>Finishing Point id，后一个点的索引</td>
+</tr>
+<tr>
+<td>blid</td>
+<td>int32</td>
+<td>Begining Line id，前一条线的索引</td>
+</tr>
+<tr>
+<td>flid</td>
+<td>int32</td>
+<td>Finishing Line id，后一条线的索引</td>
+</tr>
+</tbody></table>
+<h2 id="Area"><a href="#Area" class="headerlink" title="Area"></a>Area</h2><p>面是由多条线构成的，从这一特点出发可以推定组成面的这些线肯定相互连接，所以我们只需要第一根线跟最后一根线的索引即可，如下所示。</p>
+<table>
+<thead>
+<tr>
+<th>字段名</th>
+<th>数据类型</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>aid</td>
+<td>int32</td>
+<td>Area id，区域编号</td>
+</tr>
+<tr>
+<td>slid</td>
+<td>int32</td>
+<td>Started Line id，起始线索引</td>
+</tr>
+<tr>
+<td>elid</td>
+<td>int32</td>
+<td>Ended Line id，终点线索引</td>
+</tr>
+</tbody></table>
+<h1 id="道路元素"><a href="#道路元素" class="headerlink" title="道路元素"></a>道路元素</h1><p>有了上面的基本元素，就可以开始在矢量地图中构建更为复杂的道路元素了。我还是从点线面模型出发，讲解下Node.msg、Lane.msg、WayArea.msg这三个最基本道路元素的消息格式吧。</p>
+<h2 id="Node"><a href="#Node" class="headerlink" title="Node"></a>Node</h2><p>其实就是点，很好理解。因为在 Autoware Tools 中画矢量地图的话，每画一条白线，停止线啥的都是先 Add Node，也就是添加一个点，注解如下。</p>
+<table>
+<thead>
+<tr>
+<th>字段名</th>
+<th>数据类型</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>nid</td>
+<td>int32</td>
+<td>Node id，节点索引</td>
+</tr>
+<tr>
+<td>pid</td>
+<td>int32</td>
+<td>Point id，对应点的索引</td>
+</tr>
+</tbody></table>
+<h2 id="Lane"><a href="#Lane" class="headerlink" title="Lane"></a>Lane</h2><p>Lane是车道线，除了基本线的特征，还需要包含路网信息，所以定义很复杂，如下所示。</p>
+<table>
+<thead>
+<tr>
+<th>字段名</th>
+<th>数据类型</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>lnid</td>
+<td>int32</td>
+<td>Lane id</td>
+</tr>
+<tr>
+<td>did</td>
+<td>int32</td>
+<td>Dtlane id，虽然名字包含车道，但实际上它是一个点</td>
+</tr>
+<tr>
+<td>blid</td>
+<td>int32</td>
+<td>Beginning Lane id</td>
+</tr>
+<tr>
+<td>flid</td>
+<td>int32</td>
+<td>Finishing Lane id</td>
+</tr>
+<tr>
+<td>bnid</td>
+<td>int32</td>
+<td>Beginning Node id</td>
+</tr>
+<tr>
+<td>fnid</td>
+<td>int32</td>
+<td>Finishing Node id</td>
+</tr>
+<tr>
+<td>jct</td>
+<td>int32</td>
+<td>这个应该无英文全称，但它用来指定当前车道分支&#x2F;合并模式，跟底下blid2-4和flid2-4有关</td>
+</tr>
+<tr>
+<td>blid2-4</td>
+<td>int32</td>
+<td>这里的blid2，3，4可能会让人疑惑，但其实很好理解，就是合并到当前车道的上一车道不一定就直行的一条，左右转的车道也有可能合并到当前车道</td>
+</tr>
+<tr>
+<td>flid2-4</td>
+<td>int32</td>
+<td>同样，我们当前车道不一定只能往前面的车道行驶，在红绿灯路口会有既能直行又能左右转的车道</td>
+</tr>
+<tr>
+<td>clossid</td>
+<td>int32</td>
+<td>Crosswalk id，每条车道前面可能有人行道，人行道也有对应的索引，<font color="red">这个字段有待考证</font>，但我是这么理解的</td>
+</tr>
+<tr>
+<td>span</td>
+<td>float64</td>
+<td>这个应该也无英文全称，但它代表当前车道线的长度</td>
+</tr>
+<tr>
+<td>lcnt</td>
+<td>int32</td>
+<td>Lane count，同向的车道数</td>
+</tr>
+<tr>
+<td>lno</td>
+<td>int32</td>
+<td>Lane number，本车道线在同向车道中的编号，从左往右开始数</td>
+</tr>
+<tr>
+<td>lanetype</td>
+<td>int32</td>
+<td>Lane Type，用来确定是直行车道还是左右转车道</td>
+</tr>
+<tr>
+<td>limitvel</td>
+<td>int32</td>
+<td>Limit velocity，最高速度</td>
+</tr>
+<tr>
+<td>refvel</td>
+<td>int32</td>
+<td>Reference velocity，参考速度</td>
+</tr>
+<tr>
+<td>roadsecid</td>
+<td>int32</td>
+<td>Road Section id，路段索引，所谓路段就是并排的车道线，这个字段应该是为了方便程序查找相邻车道线而设的</td>
+</tr>
+<tr>
+<td>lanecfgfg</td>
+<td>int32</td>
+<td>Lane change Flag，当前车道是否允许变道，一般红绿灯路口不允许变道</td>
+</tr>
+<tr>
+<td>linkwaid</td>
+<td>int32</td>
+<td>Link Wayarea id，关联可行驶区域索引</td>
+</tr>
+</tbody></table>
+<h2 id="WayArea"><a href="#WayArea" class="headerlink" title="WayArea"></a>WayArea</h2><p>代表可行驶区域，很简单就不赘述了。</p>
+<table>
+<thead>
+<tr>
+<th>字段名</th>
+<th>数据类型</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>waid</td>
+<td>int32</td>
+<td>WayArea id</td>
+</tr>
+<tr>
+<td>aid</td>
+<td>int32</td>
+<td>Area id</td>
+</tr>
+</tbody></table>
+<p>以上就是我从设计的角度出发，对Autoware csv格式的矢量地图的解读。虽然只解读了基本元素跟道路元素，但跟规控程序关系比较密切、理解上比较难的部分应该都介绍的很详细了，其他元素应该从同样的角度出发也方便理解的。那就感谢观看，有问题很欢迎交流。</p>
+<div id="footnotes"><hr><div id="footnotelist"><ol style="list-style: none; padding-left: 0; margin-left: 40px"><li id="fn:1"><span style="display: inline-block; vertical-align: top; padding-right: 10px; margin-left: -40px">1.</span><span style="display: inline-block; vertical-align: top; margin-left: 10px;">关于矢量地图的数据格式定义未开源的原因，可在 Autoware.ai 的 <a target="_blank" rel="noopener" href="https://github.com/Autoware-AI/autoware.ai/issues/1158">issue1158</a> 讨论下 Joshua Whitley 的回复中找到。<a href="#fnref:1" rev="footnote"> ↩</a></span></li><li id="fn:2"><span style="display: inline-block; vertical-align: top; padding-right: 10px; margin-left: -40px">2.</span><span style="display: inline-block; vertical-align: top; margin-left: 10px;">Autoware csv 格式的矢量地图<a target="_blank" rel="noopener" href="https://github.com/Autoware-AI/messages/tree/master/vector_map_msgs/msg">消息定义</a><a href="#fnref:2" rev="footnote"> ↩</a></span></li><li id="fn:3"><span style="display: inline-block; vertical-align: top; padding-right: 10px; margin-left: -40px">3.</span><span style="display: inline-block; vertical-align: top; margin-left: 10px;">Autoware Tools 在线矢量地图绘制工具的<a target="_blank" rel="noopener" href="https://tools.tier4.jp/vector_map_builder/user_guide/">使用说明</a><a href="#fnref:3" rev="footnote"> ↩</a></span></li><li id="fn:4"><span style="display: inline-block; vertical-align: top; padding-right: 10px; margin-left: -40px">4.</span><span style="display: inline-block; vertical-align: top; margin-left: 10px;">这是看起来比较直观的<a target="_blank" rel="noopener" href="https://www.gsi.go.jp/sokuchikijun/jpc.html">日本平面直角坐标系</a>，点进去可以查看对应的参考平面信息。总共19个，是跟程序对应的。<a href="#fnref:4" rev="footnote"> ↩</a></span></li></ol></div></div>
       </div>
       
         <div class="prev-or-next">
           <div class="post-foot-next">
             
-              <a href="/posts/55934/" target="_self">
+              <a href="/posts/63587/" target="_self">
                 <i class="iconfont icon-chevronleft"></i>
                 <span>上一页</span>
               </a>
@@ -262,7 +476,7 @@ MathJax = {
           <div class="post-attach">
             <span class="post-pubtime">
               <i class="iconfont icon-updatetime" title="更新时间"></i>
-              2022-03-01 20:19:37
+              2022-05-22 22:20:37
             </span>
             
                   <span class="post-categories">
@@ -280,26 +494,20 @@ MathJax = {
                     <i class="iconfont icon-tags" title="标签"></i>
                     
                     <span class="span--tag">
+                      <a href="/tags/Autoware/" title="Autoware">
+                        <b>#</b> Autoware
+                      </a>
+                    </span>
+                    
+                    <span class="span--tag">
                       <a href="/tags/Autonomous-Driving/" title="Autonomous Driving">
                         <b>#</b> Autonomous Driving
                       </a>
                     </span>
                     
                     <span class="span--tag">
-                      <a href="/tags/Python/" title="Python">
-                        <b>#</b> Python
-                      </a>
-                    </span>
-                    
-                    <span class="span--tag">
-                      <a href="/tags/ROS/" title="ROS">
-                        <b>#</b> ROS
-                      </a>
-                    </span>
-                    
-                    <span class="span--tag">
-                      <a href="/tags/Motion-Planning/" title="Motion Planning">
-                        <b>#</b> Motion Planning
+                      <a href="/tags/HD-Map/" title="HD Map">
+                        <b>#</b> HD Map
                       </a>
                     </span>
                     
@@ -307,11 +515,6 @@ MathJax = {
               
           </div>
           <div class="post-foot-prev">
-            
-              <a href="/posts/16494/" target="_self">
-                <span>下一页</span>
-                <i class="iconfont icon-chevronright"></i>
-              </a>
             
           </div>
         </div>
@@ -324,7 +527,7 @@ MathJax = {
   <div class="post-catalog hidden" id="catalog">
     <div class="title">目录</div>
     <div class="catalog-content">
-      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%85%B3%E4%BA%8E%E6%9C%AC%E6%96%87"><span class="toc-text">关于本文</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%83%8C%E6%99%AF"><span class="toc-text">背景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A6%82%E8%BF%B0"><span class="toc-text">概述</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C"><span class="toc-text">准备工作</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%B7%AF%E5%BE%84%E5%BD%95%E5%88%B6"><span class="toc-text">路径录制</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%B7%AF%E5%BE%84%E7%82%B9%E6%A0%BC%E5%BC%8F"><span class="toc-text">路径点格式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B5%81%E7%A8%8B%E5%9B%BE"><span class="toc-text">流程图</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BB%E7%A8%8B%E5%BA%8F"><span class="toc-text">主程序</span></a></li></ol></li></ol>
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%A6%82%E8%BF%B0"><span class="toc-text">概述</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C"><span class="toc-text">准备工作</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%9F%BA%E6%9C%AC%E5%85%83%E7%B4%A0"><span class="toc-text">基本元素</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Point"><span class="toc-text">Point</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Line"><span class="toc-text">Line</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Area"><span class="toc-text">Area</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%81%93%E8%B7%AF%E5%85%83%E7%B4%A0"><span class="toc-text">道路元素</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Node"><span class="toc-text">Node</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Lane"><span class="toc-text">Lane</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#WayArea"><span class="toc-text">WayArea</span></a></li></ol></li></ol>
     </div>
   </div>
 
@@ -638,12 +841,12 @@ MathJax = {
       </a>
       <div class="share-content hidden">
         
-          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + %E5%9F%BA%E4%BA%8Ewaypoint%E7%9A%84%E8%B7%AF%E5%BE%84%E8%A7%84%E5%88%92%E4%B8%8E%E6%8E%A7%E5%88%B6%E7%AE%97%E6%B3%95%E7%9A%84%E5%AE%9E%E7%8E%B0%EF%BC%88%E4%B8%8A%EF%BC%89 + '&url=' + http%3A%2F%2Ffindmb.top%2Fposts%2F6786%2F + '" target="_blank" title="Twitter">
+          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + %E4%BB%8E%E8%AE%BE%E8%AE%A1%E7%9A%84%E8%A7%92%E5%BA%A6%E7%9C%8BAutoware%E7%9F%A2%E9%87%8F%E5%9C%B0%E5%9B%BE%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F + '&url=' + http%3A%2F%2Ffindmb.top%2Fposts%2F58377%2F + '" target="_blank" title="Twitter">
             <i class="iconfont icon-twitter"></i>
           </a>
         
         
-          <a class="share-item" href="https://www.facebook.com/sharer.php?u=http://findmb.top/posts/6786/" target="_blank" title="Facebook">
+          <a class="share-item" href="https://www.facebook.com/sharer.php?u=http://findmb.top/posts/58377/" target="_blank" title="Facebook">
             <i class="iconfont icon-facebooksquare"></i>
           </a>
         

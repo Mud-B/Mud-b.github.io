@@ -6,7 +6,7 @@
   <link href="http://findmb.top/atom.xml" rel="self"/>
   
   <link href="http://findmb.top/"/>
-  <updated>2022-05-14T05:59:53.070Z</updated>
+  <updated>2022-05-26T11:06:19.722Z</updated>
   <id>http://findmb.top/</id>
   
   <author>
@@ -17,18 +17,47 @@
   <generator uri="https://hexo.io/">Hexo</generator>
   
   <entry>
+    <title>从设计的角度看Autoware矢量地图数据格式</title>
+    <link href="http://findmb.top/posts/58377/"/>
+    <id>http://findmb.top/posts/58377/</id>
+    <published>2022-05-22T14:20:37.000Z</published>
+    <updated>2022-05-26T11:06:19.722Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css&quot;&gt;&lt;h1 id=&quot;概述&quot;&gt;&lt;a href=&quot;#概述&quot;</summary>
+        
+      
+    
+    
+    
+    <category term="实用教程" scheme="http://findmb.top/categories/%E5%AE%9E%E7%94%A8%E6%95%99%E7%A8%8B/"/>
+    
+    
+    <category term="Autoware" scheme="http://findmb.top/tags/Autoware/"/>
+    
+    <category term="Autonomous Driving" scheme="http://findmb.top/tags/Autonomous-Driving/"/>
+    
+    <category term="HD Map" scheme="http://findmb.top/tags/HD-Map/"/>
+    
+  </entry>
+  
+  <entry>
     <title>当然我在拍照，啊</title>
     <link href="http://findmb.top/posts/63587/"/>
     <id>http://findmb.top/posts/63587/</id>
     <published>2022-05-02T16:00:00.000Z</published>
-    <updated>2022-05-14T05:59:53.070Z</updated>
+    <updated>2022-05-15T11:28:22.918Z</updated>
     
     
       
       
         
         
-    <summary type="html">&lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css&quot;&gt;&lt;h1 id=&quot;安静&quot;&gt;&lt;a href=&quot;#安静&quot;</summary>
+    <summary type="html">&lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css&quot;&gt;&lt;h1 id=&quot;类&quot;&gt;&lt;a href=&quot;#类&quot;</summary>
         
       
     
@@ -122,11 +151,11 @@
     <category term="实用教程" scheme="http://findmb.top/categories/%E5%AE%9E%E7%94%A8%E6%95%99%E7%A8%8B/"/>
     
     
+    <category term="Autonomous Driving" scheme="http://findmb.top/tags/Autonomous-Driving/"/>
+    
     <category term="Python" scheme="http://findmb.top/tags/Python/"/>
     
     <category term="ROS" scheme="http://findmb.top/tags/ROS/"/>
-    
-    <category term="Autonomous Driving" scheme="http://findmb.top/tags/Autonomous-Driving/"/>
     
     <category term="Motion Planning" scheme="http://findmb.top/tags/Motion-Planning/"/>
     
@@ -153,11 +182,11 @@
     <category term="实用教程" scheme="http://findmb.top/categories/%E5%AE%9E%E7%94%A8%E6%95%99%E7%A8%8B/"/>
     
     
+    <category term="Autonomous Driving" scheme="http://findmb.top/tags/Autonomous-Driving/"/>
+    
     <category term="Python" scheme="http://findmb.top/tags/Python/"/>
     
     <category term="ROS" scheme="http://findmb.top/tags/ROS/"/>
-    
-    <category term="Autonomous Driving" scheme="http://findmb.top/tags/Autonomous-Driving/"/>
     
     <category term="Motion Planning" scheme="http://findmb.top/tags/Motion-Planning/"/>
     
@@ -184,11 +213,11 @@
     <category term="实用教程" scheme="http://findmb.top/categories/%E5%AE%9E%E7%94%A8%E6%95%99%E7%A8%8B/"/>
     
     
+    <category term="Autonomous Driving" scheme="http://findmb.top/tags/Autonomous-Driving/"/>
+    
     <category term="C/C++" scheme="http://findmb.top/tags/C-C/"/>
     
     <category term="ROS" scheme="http://findmb.top/tags/ROS/"/>
-    
-    <category term="Autonomous Driving" scheme="http://findmb.top/tags/Autonomous-Driving/"/>
     
     <category term="Motion Planning" scheme="http://findmb.top/tags/Motion-Planning/"/>
     
@@ -525,33 +554,6 @@
         
         
     <summary type="html">&lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css&quot;&gt;&lt;h1 id=&quot;出发&quot;&gt;&lt;a href=&quot;#出发&quot;</summary>
-        
-      
-    
-    
-    
-    <category term="生活杂记" scheme="http://findmb.top/categories/%E7%94%9F%E6%B4%BB%E6%9D%82%E8%AE%B0/"/>
-    
-    
-    <category term="随记" scheme="http://findmb.top/tags/%E9%9A%8F%E8%AE%B0/"/>
-    
-    <category term="骑行" scheme="http://findmb.top/tags/%E9%AA%91%E8%A1%8C/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>环青海湖骑行第一天</title>
-    <link href="http://findmb.top/posts/16913/"/>
-    <id>http://findmb.top/posts/16913/</id>
-    <published>2020-07-16T07:16:29.000Z</published>
-    <updated>2022-03-08T11:41:56.122Z</updated>
-    
-    
-      
-      
-        
-        
-    <summary type="html">&lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css&quot;&gt;&lt;h1 id=&quot;前记&quot;&gt;&lt;a href=&quot;#前记&quot;</summary>
         
       
     

@@ -4,11 +4,40 @@
   
     
     <entry>
+      <title>从设计的角度看Autoware矢量地图数据格式</title>
+      <link href="/posts/58377/"/>
+      <url>/posts/58377/</url>
+      
+        <content type="html"><![CDATA[<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><h1 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h1><p>Autoware csv格式的矢量地图字段名定义是比较神奇，而且由于这个定义是Asia公司提供的没有开源<sup id="fnref:1"><a href="#fn:1" rel="footnote"><span class="hint--top hint--error hint--medium hint--rounded hint--bounce" aria-label="关于矢量地图的数据格式定义未开源的原因，可在 Autoware.ai 的 [issue1158](https://github.com/Autoware-AI/autoware.ai/issues/1158) 讨论下 Joshua Whitley 的回复中找到。">[1]</span></a></sup>。如果不特地做下记录的话，还是挺难一下子记住的。作为Autoware planning模块的主要输入，好好看一下它，对理解Autoware决策规划的相关代码还是有挺大帮助的。</p><h2 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h2><ol><li>有关Autoware矢量地图的消息定义可以在这里<sup id="fnref:2"><a href="#fn:2" rel="footnote"><span class="hint--top hint--error hint--medium hint--rounded hint--bounce" aria-label="Autoware csv 格式的矢量地图[消息定义](https://github.com/Autoware-AI/messages/tree/master/vector_map_msgs/msg)">[2]</span></a></sup>找到；</li><li>画过矢量地图会更好地帮助我们理解里面的概念，所以我建议大家可以借助这份说明<sup id="fnref:3"><a href="#fn:3" rel="footnote"><span class="hint--top hint--error hint--medium hint--rounded hint--bounce" aria-label="Autoware Tools 在线矢量地图绘制工具的[使用说明](https://tools.tier4.jp/vector_map_builder/user_guide/)">[3]</span></a></sup>来简单画下csv格式的矢量地图。</li></ol><h1 id="基本元素"><a href="#基本元素" class="headerlink" title="基本元素"></a>基本元素</h1><p>首先如果让我们来定义高精地图，我们会从哪里出发？我想我的话会从<font color="blue">点线面</font>这样的基本模型出发。那Autoware呢，也是如此。在我之前分享的矢量地图消息定义<sup id="fnref:2"><a href="#fn:2" rel="footnote"><span class="hint--top hint--error hint--medium hint--rounded hint--bounce" aria-label="Autoware csv 格式的矢量地图[消息定义](https://github.com/Autoware-AI/messages/tree/master/vector_map_msgs/msg)">[2]</span></a></sup>目录下，Point.msg，Line.msg、Area.msg这三个文件就分别对应点线面这三个元素，那就一个个来介绍吧。</p><h2 id="Point"><a href="#Point" class="headerlink" title="Point"></a>Point</h2><p>点是构成车道线、停止线等道路信息最基本的元素，但在Autoware的矢量地图格式里是较复杂的，下表是我对它格式的注解。</p><table><thead><tr><th>字段名</th><th>数据类型</th><th>描述</th></tr></thead><tbody><tr><td>pid</td><td>int32</td><td>point id，点的索引值，用于管理</td></tr><tr><td>b</td><td>float64</td><td>Latitude，点的纬度</td></tr><tr><td>l</td><td>float64</td><td>Longitude，点的经度</td></tr><tr><td>h</td><td>float64</td><td>Height，点的海拔</td></tr><tr><td>bx</td><td>float64</td><td>Latitude in x coordinate，点的纬度转化到地图x轴上的坐标值</td></tr><tr><td>ly</td><td>float64</td><td>Longitude in y coordinate，点的经度转化到地图y轴上的坐标值</td></tr><tr><td>ref</td><td>int32</td><td>reference num，对应的是日本矩形平面的编号<sup id="fnref:4"><a href="#fn:4" rel="footnote"><span class="hint--top hint--error hint--medium hint--rounded hint--bounce" aria-label="这是看起来比较直观的[日本平面直角坐标系](https://www.gsi.go.jp/sokuchikijun/jpc.html)，点进去可以查看对应的参考平面信息。总共19个，是跟程序对应的。">[4]</span></a></sup>，它跟点的经纬度值转成xy坐标值所参考的原点有关联</td></tr><tr><td>mcodeX</td><td>int32</td><td>mcode1，2，3这三个字段值属于magic number范畴，它们的作用没法明确，但不会影响后续代码阅读</td></tr></tbody></table><h2 id="Line"><a href="#Line" class="headerlink" title="Line"></a>Line</h2><p>两个点确定一条直线，再添加前一条线跟后一条线的索引值，就构成了Autoware矢量地图格式里最基本的线，如下所示。</p><table><thead><tr><th>字段名</th><th>数据类型</th><th>描述</th></tr></thead><tbody><tr><td>lid</td><td>int32</td><td>line id，线的索引值</td></tr><tr><td>bpid</td><td>int32</td><td>Begining Point id，起始点索引</td></tr><tr><td>fpid</td><td>int32</td><td>Finishing Point id，后一个点的索引</td></tr><tr><td>blid</td><td>int32</td><td>Begining Line id，前一条线的索引</td></tr><tr><td>flid</td><td>int32</td><td>Finishing Line id，后一条线的索引</td></tr></tbody></table><h2 id="Area"><a href="#Area" class="headerlink" title="Area"></a>Area</h2><p>面是由多条线构成的，从这一特点出发可以推定组成面的这些线肯定相互连接，所以我们只需要第一根线跟最后一根线的索引即可，如下所示。</p><table><thead><tr><th>字段名</th><th>数据类型</th><th>描述</th></tr></thead><tbody><tr><td>aid</td><td>int32</td><td>Area id，区域编号</td></tr><tr><td>slid</td><td>int32</td><td>Started Line id，起始线索引</td></tr><tr><td>elid</td><td>int32</td><td>Ended Line id，终点线索引</td></tr></tbody></table><h1 id="道路元素"><a href="#道路元素" class="headerlink" title="道路元素"></a>道路元素</h1><p>有了上面的基本元素，就可以开始在矢量地图中构建更为复杂的道路元素了。我还是从点线面模型出发，讲解下Node.msg、Lane.msg、WayArea.msg这三个最基本道路元素的消息格式吧。</p><h2 id="Node"><a href="#Node" class="headerlink" title="Node"></a>Node</h2><p>其实就是点，很好理解。因为在 Autoware Tools 中画矢量地图的话，每画一条白线，停止线啥的都是先 Add Node，也就是添加一个点，注解如下。</p><table><thead><tr><th>字段名</th><th>数据类型</th><th>描述</th></tr></thead><tbody><tr><td>nid</td><td>int32</td><td>Node id，节点索引</td></tr><tr><td>pid</td><td>int32</td><td>Point id，对应点的索引</td></tr></tbody></table><h2 id="Lane"><a href="#Lane" class="headerlink" title="Lane"></a>Lane</h2><p>Lane是车道线，除了基本线的特征，还需要包含路网信息，所以定义很复杂，如下所示。</p><table><thead><tr><th>字段名</th><th>数据类型</th><th>描述</th></tr></thead><tbody><tr><td>lnid</td><td>int32</td><td>Lane id</td></tr><tr><td>did</td><td>int32</td><td>Dtlane id，虽然名字包含车道，但实际上它是一个点</td></tr><tr><td>blid</td><td>int32</td><td>Beginning Lane id</td></tr><tr><td>flid</td><td>int32</td><td>Finishing Lane id</td></tr><tr><td>bnid</td><td>int32</td><td>Beginning Node id</td></tr><tr><td>fnid</td><td>int32</td><td>Finishing Node id</td></tr><tr><td>jct</td><td>int32</td><td>这个应该无英文全称，但它用来指定当前车道分支&#x2F;合并模式，跟底下blid2-4和flid2-4有关</td></tr><tr><td>blid2-4</td><td>int32</td><td>这里的blid2，3，4可能会让人疑惑，但其实很好理解，就是合并到当前车道的上一车道不一定就直行的一条，左右转的车道也有可能合并到当前车道</td></tr><tr><td>flid2-4</td><td>int32</td><td>同样，我们当前车道不一定只能往前面的车道行驶，在红绿灯路口会有既能直行又能左右转的车道</td></tr><tr><td>clossid</td><td>int32</td><td>Crosswalk id，每条车道前面可能有人行道，人行道也有对应的索引，<font color="red">这个字段有待考证</font>，但我是这么理解的</td></tr><tr><td>span</td><td>float64</td><td>这个应该也无英文全称，但它代表当前车道线的长度</td></tr><tr><td>lcnt</td><td>int32</td><td>Lane count，同向的车道数</td></tr><tr><td>lno</td><td>int32</td><td>Lane number，本车道线在同向车道中的编号，从左往右开始数</td></tr><tr><td>lanetype</td><td>int32</td><td>Lane Type，用来确定是直行车道还是左右转车道</td></tr><tr><td>limitvel</td><td>int32</td><td>Limit velocity，最高速度</td></tr><tr><td>refvel</td><td>int32</td><td>Reference velocity，参考速度</td></tr><tr><td>roadsecid</td><td>int32</td><td>Road Section id，路段索引，所谓路段就是并排的车道线，这个字段应该是为了方便程序查找相邻车道线而设的</td></tr><tr><td>lanecfgfg</td><td>int32</td><td>Lane change Flag，当前车道是否允许变道，一般红绿灯路口不允许变道</td></tr><tr><td>linkwaid</td><td>int32</td><td>Link Wayarea id，关联可行驶区域索引</td></tr></tbody></table><h2 id="WayArea"><a href="#WayArea" class="headerlink" title="WayArea"></a>WayArea</h2><p>代表可行驶区域，很简单就不赘述了。</p><table><thead><tr><th>字段名</th><th>数据类型</th><th>描述</th></tr></thead><tbody><tr><td>waid</td><td>int32</td><td>WayArea id</td></tr><tr><td>aid</td><td>int32</td><td>Area id</td></tr></tbody></table><p>以上就是我从设计的角度出发，对Autoware csv格式的矢量地图的解读。虽然只解读了基本元素跟道路元素，但跟规控程序关系比较密切、理解上比较难的部分应该都介绍的很详细了，其他元素应该从同样的角度出发也方便理解的。那就感谢观看，有问题很欢迎交流。</p><div id="footnotes"><hr><div id="footnotelist"><ol style="list-style: none; padding-left: 0; margin-left: 40px"><li id="fn:1"><span style="display: inline-block; vertical-align: top; padding-right: 10px; margin-left: -40px">1.</span><span style="display: inline-block; vertical-align: top; margin-left: 10px;">关于矢量地图的数据格式定义未开源的原因，可在 Autoware.ai 的 <a href="https://github.com/Autoware-AI/autoware.ai/issues/1158">issue1158</a> 讨论下 Joshua Whitley 的回复中找到。<a href="#fnref:1" rev="footnote"> ↩</a></span></li><li id="fn:2"><span style="display: inline-block; vertical-align: top; padding-right: 10px; margin-left: -40px">2.</span><span style="display: inline-block; vertical-align: top; margin-left: 10px;">Autoware csv 格式的矢量地图<a href="https://github.com/Autoware-AI/messages/tree/master/vector_map_msgs/msg">消息定义</a><a href="#fnref:2" rev="footnote"> ↩</a></span></li><li id="fn:3"><span style="display: inline-block; vertical-align: top; padding-right: 10px; margin-left: -40px">3.</span><span style="display: inline-block; vertical-align: top; margin-left: 10px;">Autoware Tools 在线矢量地图绘制工具的<a href="https://tools.tier4.jp/vector_map_builder/user_guide/">使用说明</a><a href="#fnref:3" rev="footnote"> ↩</a></span></li><li id="fn:4"><span style="display: inline-block; vertical-align: top; padding-right: 10px; margin-left: -40px">4.</span><span style="display: inline-block; vertical-align: top; margin-left: 10px;">这是看起来比较直观的<a href="https://www.gsi.go.jp/sokuchikijun/jpc.html">日本平面直角坐标系</a>，点进去可以查看对应的参考平面信息。总共19个，是跟程序对应的。<a href="#fnref:4" rev="footnote"> ↩</a></span></li></ol></div></div>]]></content>
+      
+      
+      <categories>
+          
+          <category> 实用教程 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> Autoware </tag>
+            
+            <tag> Autonomous Driving </tag>
+            
+            <tag> HD Map </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>当然我在拍照，啊</title>
       <link href="/posts/63587/"/>
       <url>/posts/63587/</url>
       
-        <content type="html"><![CDATA[<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><h1 id="安静"><a href="#安静" class="headerlink" title="安静"></a>安静</h1><p>它们在说什么<br><a href="https://imgtu.com/i/O6aydg"><img src="https://s1.ax1x.com/2022/05/14/O6aydg.md.jpg" alt="树叶"></a><br><a href="https://imgtu.com/i/O6aDL8"><img src="https://s1.ax1x.com/2022/05/14/O6aDL8.md.jpg" alt="树叶1"></a><br><a href="https://imgtu.com/i/O6a0QP"><img src="https://s1.ax1x.com/2022/05/14/O6a0QP.md.jpg" alt="树叶2"></a><br><a href="https://imgtu.com/i/O6a1sK"><img src="https://s1.ax1x.com/2022/05/14/O6a1sK.md.jpg" alt="莲1"></a><br><a href="https://imgtu.com/i/O6auGR"><img src="https://s1.ax1x.com/2022/05/14/O6auGR.md.jpg" alt="莲2"></a><br><a href="https://imgtu.com/i/O6aeIJ"><img src="https://s1.ax1x.com/2022/05/14/O6aeIJ.md.jpg" alt="莲3"></a><br><a href="https://imgtu.com/i/O6aFMV"><img src="https://s1.ax1x.com/2022/05/14/O6aFMV.md.jpg" alt="莲4"></a><br><a href="https://imgtu.com/i/O6aPx0"><img src="https://s1.ax1x.com/2022/05/14/O6aPx0.md.jpg" alt="莲5"></a></p><h1 id="对象"><a href="#对象" class="headerlink" title="对象"></a>对象</h1><p>我没听明白<br><a href="https://imgtu.com/i/O6aBsf"><img src="https://s1.ax1x.com/2022/05/14/O6aBsf.md.jpg" alt="笼子"></a><br><a href="https://imgtu.com/i/O6aZa4"><img src="https://s1.ax1x.com/2022/05/14/O6aZa4.md.jpg" alt="拖拉机"></a><br><a href="https://imgtu.com/i/O6aVZF"><img src="https://s1.ax1x.com/2022/05/14/O6aVZF.md.jpg" alt="火车"></a></p><h1 id="结构"><a href="#结构" class="headerlink" title="结构"></a>结构</h1><p>也许你听见了<br><a href="https://imgtu.com/i/O6a6oQ"><img src="https://s1.ax1x.com/2022/05/14/O6a6oQ.md.jpg" alt="小径"></a><br><a href="https://imgtu.com/i/O6aMxx"><img src="https://s1.ax1x.com/2022/05/14/O6aMxx.md.jpg" alt="garden"></a><br><a href="https://imgtu.com/i/O6aKR1"><img src="https://s1.ax1x.com/2022/05/14/O6aKR1.md.jpg" alt="wall"></a><br><a href="https://imgtu.com/i/O6aAqU"><img src="https://s1.ax1x.com/2022/05/14/O6aAqU.md.jpg" alt="palace"></a><br><a href="https://imgtu.com/i/O6akrT"><img src="https://s1.ax1x.com/2022/05/14/O6akrT.md.jpg" alt="door"></a></p><p>啊</p>]]></content>
+        <content type="html"><![CDATA[<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><h1 id="类"><a href="#类" class="headerlink" title="类"></a>类</h1><p>它们在说什么<br><img src="https://s1.ax1x.com/2022/05/14/O6aydg.md.jpg" alt="树叶"><br><img src="https://s1.ax1x.com/2022/05/14/O6aDL8.md.jpg" alt="树叶1"><br><img src="https://s1.ax1x.com/2022/05/14/O6a0QP.md.jpg" alt="树叶2"><br><img src="https://s1.ax1x.com/2022/05/14/O6a1sK.md.jpg" alt="莲1"><br><img src="https://s1.ax1x.com/2022/05/14/O6auGR.md.jpg" alt="莲2"><br><img src="https://s1.ax1x.com/2022/05/14/O6aeIJ.md.jpg" alt="莲3"><br><img src="https://s1.ax1x.com/2022/05/14/O6aFMV.md.jpg" alt="莲4"><br><img src="https://s1.ax1x.com/2022/05/14/O6aPx0.md.jpg" alt="莲5"></p><h1 id="对象"><a href="#对象" class="headerlink" title="对象"></a>对象</h1><p>我没听明白<br><img src="https://s1.ax1x.com/2022/05/14/O6aBsf.md.jpg" alt="笼子"><br><img src="https://s1.ax1x.com/2022/05/14/O6aZa4.md.jpg" alt="拖拉机"><br><img src="https://s1.ax1x.com/2022/05/14/O6aVZF.md.jpg" alt="火车"></p><h1 id="结构体"><a href="#结构体" class="headerlink" title="结构体"></a>结构体</h1><p>也许你听见了<br><img src="https://s1.ax1x.com/2022/05/14/O6a6oQ.md.jpg" alt="小径"><br><img src="https://s1.ax1x.com/2022/05/14/O6aMxx.md.jpg" alt="garden"><br><img src="https://s1.ax1x.com/2022/05/14/O6aKR1.md.jpg" alt="wall"><br><img src="https://s1.ax1x.com/2022/05/14/O6aAqU.md.jpg" alt="palace"><br><img src="https://s1.ax1x.com/2022/05/14/O6akrT.md.jpg" alt="door"></p><p>啊</p>]]></content>
       
       
       <categories>
@@ -105,11 +134,11 @@
       
         <tags>
             
+            <tag> Autonomous Driving </tag>
+            
             <tag> Python </tag>
             
             <tag> ROS </tag>
-            
-            <tag> Autonomous Driving </tag>
             
             <tag> Motion Planning </tag>
             
@@ -136,11 +165,11 @@
       
         <tags>
             
+            <tag> Autonomous Driving </tag>
+            
             <tag> Python </tag>
             
             <tag> ROS </tag>
-            
-            <tag> Autonomous Driving </tag>
             
             <tag> Motion Planning </tag>
             
@@ -167,11 +196,11 @@
       
         <tags>
             
+            <tag> Autonomous Driving </tag>
+            
             <tag> C/C++ </tag>
             
             <tag> ROS </tag>
-            
-            <tag> Autonomous Driving </tag>
             
             <tag> Motion Planning </tag>
             
