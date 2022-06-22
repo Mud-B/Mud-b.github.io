@@ -6,7 +6,7 @@
   <link href="http://findmb.top/atom.xml" rel="self"/>
   
   <link href="http://findmb.top/"/>
-  <updated>2022-06-22T14:36:55.032Z</updated>
+  <updated>2022-06-22T14:46:19.317Z</updated>
   <id>http://findmb.top/</id>
   
   <author>
@@ -21,7 +21,7 @@
     <link href="http://findmb.top/posts/8937/"/>
     <id>http://findmb.top/posts/8937/</id>
     <published>2022-06-20T12:46:08.000Z</published>
-    <updated>2022-06-22T14:36:55.032Z</updated>
+    <updated>2022-06-22T14:46:19.317Z</updated>
     
     
       
@@ -40,6 +40,8 @@
     <category term="Autonomous Driving" scheme="http://findmb.top/tags/Autonomous-Driving/"/>
     
     <category term="Motion Planning" scheme="http://findmb.top/tags/Motion-Planning/"/>
+    
+    <category term="Autoware" scheme="http://findmb.top/tags/Autoware/"/>
     
   </entry>
   
