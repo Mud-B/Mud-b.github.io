@@ -4,6 +4,33 @@
   
     
     <entry>
+      <title>Autoware调试心得-astar_avoid的避障实现</title>
+      <link href="/posts/8937/"/>
+      <url>/posts/8937/</url>
+      
+        <content type="html"><![CDATA[<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><h1 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h1><p>网上有关 astar_avoid 模块的源码分析挺多的，我这里就不对它用到的 A* 算法做过多赘述了。不过知道它的实现原理跟实际调试还是存在很大出入，因为 A* 算法在实际应用时需要跟Autoware的其他模块所结合，为此了解其实际避障逻辑尤为重要，这也是本文的由来。</p><h1 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h1><ol><li>实车或仿真环境</li><li>已部署成功 Autoware</li><li>一个可被检测到的障碍物</li></ol><h1 id="避障逻辑"><a href="#避障逻辑" class="headerlink" title="避障逻辑"></a>避障逻辑</h1><p>因为我看到 astar_avoid 模块里的源码用到了有限状态机（Finite State Machine）来应对各种可能遇到的环境，所以我就以期望的避障状态出发绘制了下面两张时序图。</p><h2 id="成功避障"><a href="#成功避障" class="headerlink" title="成功避障"></a>成功避障</h2><p>下图是我们最期望看到的，一次成功的避障会经历的各个状态的切换过程。<br><img src="https://s1.ax1x.com/2022/06/21/jSDfL4.png" alt="avoid0"></p><h2 id="没有避障"><a href="#没有避障" class="headerlink" title="没有避障"></a>没有避障</h2><p>而实际调试中没有避障成功的话，那就大概率是卡在下图的某一环节里了。<br><img src="https://s1.ax1x.com/2022/06/21/jSD4eJ.png" alt="avoid1"></p><p>这两图放一起应该很清晰就能认识 astar_avoid 模块的避障逻辑，那就这些。</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> 实用教程 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> Autonomous Driving </tag>
+            
+            <tag> Motion Planning </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>从设计的角度看Autoware矢量地图数据格式</title>
       <link href="/posts/58377/"/>
       <url>/posts/58377/</url>
@@ -20,9 +47,9 @@
       
         <tags>
             
-            <tag> Autoware </tag>
-            
             <tag> Autonomous Driving </tag>
+            
+            <tag> Autoware </tag>
             
             <tag> HD Map </tag>
             
@@ -136,11 +163,11 @@
             
             <tag> Autonomous Driving </tag>
             
+            <tag> Motion Planning </tag>
+            
             <tag> Python </tag>
             
             <tag> ROS </tag>
-            
-            <tag> Motion Planning </tag>
             
         </tags>
       
@@ -167,11 +194,11 @@
             
             <tag> Autonomous Driving </tag>
             
+            <tag> Motion Planning </tag>
+            
             <tag> Python </tag>
             
             <tag> ROS </tag>
-            
-            <tag> Motion Planning </tag>
             
         </tags>
       
@@ -198,11 +225,11 @@
             
             <tag> Autonomous Driving </tag>
             
+            <tag> Motion Planning </tag>
+            
             <tag> C/C++ </tag>
             
             <tag> ROS </tag>
-            
-            <tag> Motion Planning </tag>
             
         </tags>
       

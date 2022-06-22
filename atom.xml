@@ -6,7 +6,7 @@
   <link href="http://findmb.top/atom.xml" rel="self"/>
   
   <link href="http://findmb.top/"/>
-  <updated>2022-05-26T11:06:19.722Z</updated>
+  <updated>2022-06-22T14:36:55.032Z</updated>
   <id>http://findmb.top/</id>
   
   <author>
@@ -15,6 +15,33 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Autoware调试心得-astar_avoid的避障实现</title>
+    <link href="http://findmb.top/posts/8937/"/>
+    <id>http://findmb.top/posts/8937/</id>
+    <published>2022-06-20T12:46:08.000Z</published>
+    <updated>2022-06-22T14:36:55.032Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css&quot;&gt;&lt;h1 id=&quot;简介&quot;&gt;&lt;a href=&quot;#简介&quot;</summary>
+        
+      
+    
+    
+    
+    <category term="实用教程" scheme="http://findmb.top/categories/%E5%AE%9E%E7%94%A8%E6%95%99%E7%A8%8B/"/>
+    
+    
+    <category term="Autonomous Driving" scheme="http://findmb.top/tags/Autonomous-Driving/"/>
+    
+    <category term="Motion Planning" scheme="http://findmb.top/tags/Motion-Planning/"/>
+    
+  </entry>
   
   <entry>
     <title>从设计的角度看Autoware矢量地图数据格式</title>
@@ -37,9 +64,9 @@
     <category term="实用教程" scheme="http://findmb.top/categories/%E5%AE%9E%E7%94%A8%E6%95%99%E7%A8%8B/"/>
     
     
-    <category term="Autoware" scheme="http://findmb.top/tags/Autoware/"/>
-    
     <category term="Autonomous Driving" scheme="http://findmb.top/tags/Autonomous-Driving/"/>
+    
+    <category term="Autoware" scheme="http://findmb.top/tags/Autoware/"/>
     
     <category term="HD Map" scheme="http://findmb.top/tags/HD-Map/"/>
     
@@ -153,11 +180,11 @@
     
     <category term="Autonomous Driving" scheme="http://findmb.top/tags/Autonomous-Driving/"/>
     
+    <category term="Motion Planning" scheme="http://findmb.top/tags/Motion-Planning/"/>
+    
     <category term="Python" scheme="http://findmb.top/tags/Python/"/>
     
     <category term="ROS" scheme="http://findmb.top/tags/ROS/"/>
-    
-    <category term="Motion Planning" scheme="http://findmb.top/tags/Motion-Planning/"/>
     
   </entry>
   
@@ -184,11 +211,11 @@
     
     <category term="Autonomous Driving" scheme="http://findmb.top/tags/Autonomous-Driving/"/>
     
+    <category term="Motion Planning" scheme="http://findmb.top/tags/Motion-Planning/"/>
+    
     <category term="Python" scheme="http://findmb.top/tags/Python/"/>
     
     <category term="ROS" scheme="http://findmb.top/tags/ROS/"/>
-    
-    <category term="Motion Planning" scheme="http://findmb.top/tags/Motion-Planning/"/>
     
   </entry>
   
@@ -215,11 +242,11 @@
     
     <category term="Autonomous Driving" scheme="http://findmb.top/tags/Autonomous-Driving/"/>
     
+    <category term="Motion Planning" scheme="http://findmb.top/tags/Motion-Planning/"/>
+    
     <category term="C/C++" scheme="http://findmb.top/tags/C-C/"/>
     
     <category term="ROS" scheme="http://findmb.top/tags/ROS/"/>
-    
-    <category term="Motion Planning" scheme="http://findmb.top/tags/Motion-Planning/"/>
     
   </entry>
   
@@ -527,33 +554,6 @@
         
         
     <summary type="html">&lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css&quot;&gt;&lt;h1 id=&quot;启程&quot;&gt;&lt;a href=&quot;#启程&quot;</summary>
-        
-      
-    
-    
-    
-    <category term="生活杂记" scheme="http://findmb.top/categories/%E7%94%9F%E6%B4%BB%E6%9D%82%E8%AE%B0/"/>
-    
-    
-    <category term="随记" scheme="http://findmb.top/tags/%E9%9A%8F%E8%AE%B0/"/>
-    
-    <category term="骑行" scheme="http://findmb.top/tags/%E9%AA%91%E8%A1%8C/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>环青海湖骑行第二天</title>
-    <link href="http://findmb.top/posts/53867/"/>
-    <id>http://findmb.top/posts/53867/</id>
-    <published>2020-07-17T07:16:29.000Z</published>
-    <updated>2022-03-08T11:42:41.716Z</updated>
-    
-    
-      
-      
-        
-        
-    <summary type="html">&lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css&quot;&gt;&lt;h1 id=&quot;出发&quot;&gt;&lt;a href=&quot;#出发&quot;</summary>
         
       
     

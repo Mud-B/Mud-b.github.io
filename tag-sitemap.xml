@@ -3,14 +3,21 @@
 
 
     <url>
-        <loc>http://findmb.top/tags/HD-Map/</loc>
-        <lastmod>2022-05-26T11:06:19.722Z</lastmod>
+        <loc>http://findmb.top/tags/Motion-Planning/</loc>
+        <lastmod>2022-06-22T14:36:55.032Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
 
     <url>
         <loc>http://findmb.top/tags/Autonomous-Driving/</loc>
+        <lastmod>2022-06-22T14:36:55.032Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>http://findmb.top/tags/HD-Map/</loc>
         <lastmod>2022-05-26T11:06:19.722Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
@@ -33,13 +40,6 @@
     <url>
         <loc>http://findmb.top/tags/%E9%9A%8F%E8%AE%B0/</loc>
         <lastmod>2022-05-15T11:28:22.918Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>http://findmb.top/tags/Motion-Planning/</loc>
-        <lastmod>2022-05-06T12:23:05.081Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
